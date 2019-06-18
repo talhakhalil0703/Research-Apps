@@ -22,7 +22,7 @@ for x in names:
     number = findPatientNumber.search(x)
     if number:
         number = int(number.group(1))
-        if number == 2130 and number != oldNumber: #Making sure to not add the same patient twice, and updating the matlab save file directory, you can add any patient you want to skip over here
+        if number == 2124 and number != oldNumber: #Making sure to not add the same patient twice, and updating the matlab save file directory, you can add any patient you want to skip over here
             patients.append(number) #updating the patients we have
             #Going to update the matlab file to change the save location
             file = open('/Users/talhakhalil/Documents/MATLAB/smr_conversion_auto_FOOOF.m', 'r') #Reading the file

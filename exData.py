@@ -3,34 +3,67 @@ import os
 import re
 import matplotlib.pyplot as plt
 import matlab.engine
-eng = matlab.engine.start_matlab()
+from iteration_utilities import duplicates
+from iteration_utilities import unique_everseen
 from obtainFilesText import findFileNames
 from patientsClass import Patient
+from patientsClass import IndividualFile
+from patientsClass import mmFile
+from getTracts import getTracts # Start, End, allFiles
+from getData import getDataForPatient #patient, resultFile, dataPath
 
 print('Adding Paths....')
+eng = matlab.engine.start_matlab()
 eng.loadPath(nargout = 0)
-print(' Ignore the Warnings.')
+print(', Ignore the Warnings.')
 print('\n' * 2)
 dataPath = '/Users/talhakhalil/Desktop/Research/Data'
+print('This is your data path, ' + dataPath)
 
-doNotRun = findFileNames(dataPath + '/TossData.rtf')#Removing bad Data from analysis
-doNotRun += findFileNames(dataPath + '/FilesWithTests.rtf')#Removing tests from analysis
-tracts = findFileNames(dataPath + '/Trajectories.rtf')#Used to find the starting and end point of trajectories
+doNotRun = findFileNames(dataPath + '/TossData.txt')#Removing bad Data from analysis
+doNotRun += findFileNames(dataPath + '/FilesWithTests.txt')#Removing tests from analysis
+tracts = findFileNames(dataPath + '/Trajectories.txt')#Used to find the starting and end point of trajectories
+doNotRun.sort()
 
 fileDirectory = []
 for root, dirs, files in os.walk(dataPath):
     for file in files:
-        if file.endswith('.smr'):
+        if file.endswith('_fooof_results.mat'):
             fileDirectory.append(os.path.join(root, file)) #stored the directory with the name.
 
-fileName = re.compile(r'(\d\d\d\d-\d\d\d\d)([ABCDEFabcdef])?');
+fileNameResult = re.compile(r'(\d\d\d\d-\d\d\d\d)([ABCDEF])?(auto)?(\d)?(\d)?');
+fileName = re.compile(r'(\d\d\d\d-\d\d\d\d)([ABCDEF])?');
+
 allFiles = []
 for x in fileDirectory:
     name = fileName.search(x)
-    if name!= None:
+    if name!= None and name not in allFiles:
         allFiles.append(name[0])
+allFiles = list(unique_everseen(duplicates(allFiles)))
+allFiles.sort()
 
-#Sorting out Tracts
+allResultFiles = []
+for x in fileDirectory:
+    name = fileNameResult.search(x)
+    if name!= None and name not in allResultFiles:
+        allResultFiles.append(name[0])
+allResultFiles.sort()
+
+for x in doNotRun:
+    name = fileNameResult.search(x)
+    if name[3] == None:
+        for y in allResultFiles:
+            remove = fileName.search(y)
+            if x == remove[0]:
+                allResultFiles.remove(y)
+    else:
+        try:
+            allResultFiles.remove(x)
+        except:
+            continue
+
+print('Do not run files have been removed from analysis!')
+
 startTract = []
 endTract = []
 endOfTrajectory = False #used to filp flop between start and end points as the text file is written in this way
@@ -52,7 +85,6 @@ for x in startTract:
     patientNumber = int(patientNumber.group(1))
     if patientNumber != oldPatient:
         y = Patient(patientNumber)
-        #y.setName(patientNumber)
         patientArray.append(y)
         oldPatient = patientNumber
 
@@ -70,20 +102,18 @@ for x in endTract:
         if y.getName() == patientNumber:
             y.appendEndTract(x)
 
-print(allFiles)
+for x in patientArray:
+    len = x.getTractLen()
+    i = 0
+    while i < len:
+        x.storeTract(i, getTracts(x.getStartTract(i), x.getEndTract(i), allFiles))
+        i = i + 1
 
+for x in patientArray:
+    getDataForPatient(x, allResultFiles, dataPath)
+    print('Trajectories for ' + str(x.getName()) + ' have been stored!')
 
-#content = sio.loadmat('/Users/talhakhalil/Desktop/Research/Data/2120/2120-1218auto1_fooof_results.mat')
-#struct = content['fooof_results']
-#val = struct[0,0]
-#exponential = val['background_params'][0][1]
-#error = val['error'][0][0]
-#r2 = val['r_squared'][0][0]
-#peak = val['peak_params']
-#peakvalues = []
-#for x in peak:
-#    peakvalues.append(x[0])
-
+print('All trajectories have been stored!')
 #plt.scatter(0,error)
 #plt.savefig('/Users/talhakhalil/Desktop/my_new_figure.png', transparent = False, bbox_inches = 'tight')
 #plt.show()

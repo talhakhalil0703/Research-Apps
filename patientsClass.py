@@ -3,7 +3,7 @@ class Patient:
         self.__name = name
         self.__startTract = []
         self.__endTract = []
-    
+        self.__Tracts = [] #contains all the mm files from which to extract data
 
     def setName(self, name):
         self.__name = name
@@ -11,20 +11,42 @@ class Patient:
         return self.__name
     def appendStartTract(self, tract):
         self.__startTract.append(tract)
-    def getStartTract(self):
-        return self.__startTract
+    def getStartTract(self, i):
+        return self.__startTract[i]
     def appendEndTract(self, tract):
         self.__endTract.append(tract)
-    def getEndTract(self):
-        return self.__endTract
+    def getEndTract(self, i):
+        return self.__endTract[i]
+    def getTractLen(self):
+        return len(self.__startTract)
+    def storeTract(self, int, tract):
+        self.__Tracts.append(tract.copy())
+    def getTract (self, int):
+        return self.__Tracts[int]
 
 class mmFile:
-    
-    __exponent = None
-    __r2 = None
-    __error = None
-    __peakFreq = [] #Peak frequencies
-    __freqArea = [] #Take two values and multiply and store here
+    def __init__(self, name):
+        self.__name = name
+        self.__resultsFiles = []
+
+    def appendResultsFiles(self, file):
+        self.__resultsFiles.append(file)
+    def getResultsSingleFile(self, fileName):
+        i = self.__resultsFiles.index(fileName)
+        return self.__resultsFiles(i)
+    def getResultsSingleFile(self):
+        return self.__resultsFiles
+    def getName(self):
+        return self.__name
+
+class IndividualFile:
+    def __init__(self, name):
+        self.__name = name
+        self.__exponent = None
+        self.__r2 = None
+        self.__error = None
+        self.__peakFreq = [] #Peak frequencies
+        self.__freqArea = [] #Take two values and multiply and store here
     
     def appendFreq(self, frequency):
         self.__peakFreq.append(frequency)
@@ -46,4 +68,5 @@ class mmFile:
         return self.__r2
     def getError(self):
         return self.__error
-
+    def getName(self):
+        return self.__name
