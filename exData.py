@@ -22,7 +22,10 @@ eng.loadPath(nargout = 0)
 print(', Ignore the Warnings.')
 print('\n' * 2)
 dataPath = '/Users/talhakhalil/Desktop/Research/Data'
-print('This is your data path, ' + dataPath)
+print('This is your data path, ')
+
+
+mmToTest = 2 # Value of 0 tests all files
 
 doNotRun = findFileNames(dataPath + '/TossData.txt')#Removing bad Data from analysis
 doNotRun += findFileNames(dataPath + '/FilesWithTests.txt')#Removing tests from analysis
@@ -66,7 +69,7 @@ for x in doNotRun:
         except:
             continue
 
-print('Do not run files have been removed from analysis!')
+print('Do not run files have been removed from analysis!' + '\n'*2)
 
 startTract = []
 endTract = []
@@ -119,7 +122,7 @@ for x in patientArray:
     getDataForPatient(x, allResultFiles, dataPath)
     print('Trajectories for ' + str(x.getName()) + ' have been stored!')
 
-print('All trajectories have been stored!')
+print('\n'*2 + 'All trajectories have been stored!')
 
 #print(patientArray[0].getAllTrajectory(0).getTract()[0].getResultsFile()[0].getExponent())
 
@@ -142,10 +145,15 @@ for x in patientArray:
     while y < x.getTractLen():
         dorsalIndex = x.getAllTrajectory(y).getTractLen() // 2
         z = 0
+        #print('Tract final mm: ' +  str(x.getAllTrajectory(y).getTractLen() - 1))
         while z < dorsalIndex:
-            if z == 0 or z > 3:
+            if z == 0:
                 z += 1
                 continue
+            if mmToTest != 0:
+                if z > (mmToTest):
+                    z += 1
+                    continue
             fileIndex = x.getAllTrajectory(y).getTract()[z].getResultsFilesLen()
             q = 0
             while q < fileIndex:
@@ -160,12 +168,17 @@ for x in patientArray:
                     dorsalFreqArea.append(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getFreqArea()[o])
                     o += 1
                 q += 1
+            #print('Used: ' + str(z))
             z += 1
 
         while z < x.getAllTrajectory(y).getTractLen():
-            if z == (x.getAllTrajectory(y).getTractLen() - 1) or z < (x.getAllTrajectory(y).getTractLen() - 4):
+            if z == (x.getAllTrajectory(y).getTractLen() - 1):
                 z += 1
                 continue
+            if mmToTest != 0:
+                if z < (x.getAllTrajectory(y).getTractLen() - (mmToTest + 1)):
+                    z += 1
+                    continue
             fileIndex = x.getAllTrajectory(y).getTract()[z].getResultsFilesLen()
             q = 0
             while q < fileIndex:
@@ -180,12 +193,14 @@ for x in patientArray:
                     ventralFreqArea.append(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getFreqArea()[o])
                     o += 1
                 q += 1
+            #print('Used: ' + str(z))
             z += 1
         y += 1
+    #print('\n')
 
-print('Ignored the first and last mm!')
+print('\n'*2 + 'Ignored the first and last mm!')
 print('Done seperating into Ventral and Dorsal groups!')
-print('Creating Figures!')
+print('Creating Figures!' + '\n'*2)
 jitterPlotDorsal = []
 jitterPlotVentral = []
 
@@ -206,11 +221,14 @@ binPeak = [0,10,20,30,40,50,60]
 binArea = [0,1,2,3,4,5,6,7,8,9,10]
 pointAlpha = 0.2
 
+print('Points in Dorsal: ' + str(len(jitterPlotDorsal)))
+print('Points in Ventral: ' + str(len(jitterPlotVentral)) + '\n'*2)
+
 createFigure('Dorsal',dataPath, jitterPlotDorsal, dorsalError, dorsalExponents,dorsalOffset, dorsalR2, dorsalPeakFreq, dorsalFreqArea, binPeak, binArea, pointAlpha)
 createFigure('Ventral',dataPath, jitterPlotVentral, ventralError, ventralExponents,ventralOffset, ventralR2, ventralPeakFreq, ventralFreqArea, binPeak, binArea, pointAlpha)
 
 
-print('Saved figures in ' + dataPath + '!')
+print('\n'*2 + 'Saved figures in ' + dataPath + '!')
 plt.show()
 print('Done!')
 
