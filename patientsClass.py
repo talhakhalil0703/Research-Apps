@@ -19,10 +19,21 @@ class Patient:
         return self.__endTract[i]
     def getTractLen(self):
         return len(self.__startTract)
-    def storeTract(self, int, tract):
-        self.__Tracts.append(tract.copy())
-    def getTract (self, int):
+    def appendAllTrajectory(self, tract):
+        self.__Tracts.append(tract)
+    def getAllTrajectory (self, int):
         return self.__Tracts[int]
+
+class FullTract:
+    def __init__(self):
+        self.__Tract = []
+
+    def storeTract(self, tract):
+        self.__Tract = tract.copy()
+    def getTract (self):
+        return self.__Tract
+    def getTractLen(self):
+        return len(self.__Tract)
 
 class mmFile:
     def __init__(self, name):
@@ -34,15 +45,18 @@ class mmFile:
     def getResultsSingleFile(self, fileName):
         i = self.__resultsFiles.index(fileName)
         return self.__resultsFiles(i)
-    def getResultsSingleFile(self):
+    def getResultsFile(self):
         return self.__resultsFiles
     def getName(self):
         return self.__name
+    def getResultsFilesLen(self):
+        return len(self.__resultsFiles)
 
 class IndividualFile:
     def __init__(self, name):
         self.__name = name
         self.__exponent = None
+        self.__offset = None
         self.__r2 = None
         self.__error = None
         self.__peakFreq = [] #Peak frequencies
@@ -54,16 +68,22 @@ class IndividualFile:
         self.__freqArea.append(area)
     def setExponent(self, exp):
         self.__exponent = exp
+    def setOffset(self, off):
+        self.__offset = off
     def setR2(self, rsq):
         self.__r2 = rsq
     def setError(self, err):
         self.__error = err
     def getFreq(self):
         return self.__peakFreq
+    def getFreqLen(self):
+        return len(self.__peakFreq)
     def getFreqArea(self):
         return self.__freqArea
     def getExponent(self):
         return self.__exponent
+    def getOffset(self):
+        return self.__offset
     def getR2(self):
         return self.__r2
     def getError(self):
