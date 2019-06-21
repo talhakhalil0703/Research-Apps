@@ -1,11 +1,15 @@
+#Modules needed, scipy, matplotlib, iteration_utilities, you also need the loadPath matlab inside it you can see what modules in matlab you need
+#Talha Khalil June 2019
+
 import scipy.io as sio
 import os
 import re
 import matplotlib.pyplot as plt
-import numpy as np
 import matlab.engine
 from iteration_utilities import duplicates
 from iteration_utilities import unique_everseen
+from random import uniform
+
 from obtainFilesText import findFileNames
 from patientsClass import Patient
 from patientsClass import IndividualFile
@@ -13,7 +17,6 @@ from patientsClass import mmFile
 from patientsClass import FullTract
 from getTracts import getTracts # Start, End, allFiles
 from getData import getDataForPatient #patient, resultFile, dataPath
-from random import uniform
 from createFigures import createFigure
 
 print('Adding Paths....')
@@ -22,10 +25,40 @@ eng.loadPath(nargout = 0)
 print(', Ignore the Warnings.')
 print('\n' * 2)
 dataPath = '/Users/talhakhalil/Desktop/Research/Data'
-print('This is your data path, ')
+print('This is your data path, ' + dataPath)
 
+mmToTest = int(input('How many mm do you want to test? (0, would mean to test all!)\n'))
+print('Going to test: ' + str(mmToTest) + 'mm')
 
-mmToTest = 2 # Value of 0 tests all files
+binPeak = [0,10,20,30,40,50,60] #These are the bin edges for the peak frequencies figures, you can change these to change how the histogram looks
+binArea = [0,1,2,3,4,5,6,7,8,9,10] #Same as above but for the frequency areas
+pointAlpha = 0.2 # This is the tranparency of the points on the scatter plots
+
+#These are all the lists that will end up holding the data for the use of figure creation, they are not really organized in a good manner. You can get specific data points by using the class Patient
+dorsalExponents = []
+dorsalOffset = []
+dorsalR2 = []
+dorsalError = []
+dorsalAverageExponents = []
+dorsalAverageOffset = []
+dorsalAverageR2 = []
+dorsalAverageError = []
+dorsalPeakFreq = []
+dorsalFreqArea = []
+
+ventralExponents = []
+ventralR2 = []
+ventralOffset = []
+ventralError = []
+ventralAverageExponents = []
+ventralAverageR2 = []
+ventralAverageOffset = []
+ventralAverageError = []
+ventralPeakFreq = []
+ventralFreqArea = []
+
+jitterAveragePlotDorsal = []
+jitterAveragePlotVentral = []
 
 doNotRun = findFileNames(dataPath + '/TossData.txt')#Removing bad Data from analysis
 doNotRun += findFileNames(dataPath + '/FilesWithTests.txt')#Removing tests from analysis
@@ -124,30 +157,15 @@ for x in patientArray:
 
 print('\n'*2 + 'All trajectories have been stored!')
 
-#print(patientArray[0].getAllTrajectory(0).getTract()[0].getResultsFile()[0].getExponent())
-
-dorsalExponents = []
-dorsalOffset = []
-dorsalR2 = []
-dorsalError = []
-dorsalPeakFreq = []
-dorsalFreqArea = []
-
-ventralExponents = []
-ventralR2 = []
-ventralOffset = []
-ventralError = []
-ventralPeakFreq = []
-ventralFreqArea = []
-
 for x in patientArray:
     y = 0
     while y < x.getTractLen():
         dorsalIndex = x.getAllTrajectory(y).getTractLen() // 2
         z = 0
-        #print('Tract final mm: ' +  str(x.getAllTrajectory(y).getTractLen() - 1))
+        avgExponent = []
+        avgOffset = []
         while z < dorsalIndex:
-            if z == 0:
+            if z == 0: #ignoring the first mm
                 z += 1
                 continue
             if mmToTest != 0:
@@ -155,6 +173,10 @@ for x in patientArray:
                     z += 1
                     continue
             fileIndex = x.getAllTrajectory(y).getTract()[z].getResultsFilesLen()
+            dorsalAverageExponents.append(x.getAllTrajectory(y).getTract()[z].getAverageExponent())
+            dorsalAverageOffset.append(x.getAllTrajectory(y).getTract()[z].getAverageOffset())
+            dorsalAverageR2.append(x.getAllTrajectory(y).getTract()[z].getAverageR2())
+            dorsalAverageError.append(x.getAllTrajectory(y).getTract()[z].getAverageError())
             q = 0
             while q < fileIndex:
                 dorsalExponents.append(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getExponent())
@@ -168,11 +190,10 @@ for x in patientArray:
                     dorsalFreqArea.append(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getFreqArea()[o])
                     o += 1
                 q += 1
-            #print('Used: ' + str(z))
             z += 1
 
         while z < x.getAllTrajectory(y).getTractLen():
-            if z == (x.getAllTrajectory(y).getTractLen() - 1):
+            if z == (x.getAllTrajectory(y).getTractLen() - 1): #ignoring the last mm
                 z += 1
                 continue
             if mmToTest != 0:
@@ -180,6 +201,10 @@ for x in patientArray:
                     z += 1
                     continue
             fileIndex = x.getAllTrajectory(y).getTract()[z].getResultsFilesLen()
+            ventralAverageExponents.append(x.getAllTrajectory(y).getTract()[z].getAverageExponent())
+            ventralAverageOffset.append(x.getAllTrajectory(y).getTract()[z].getAverageOffset())
+            ventralAverageR2.append(x.getAllTrajectory(y).getTract()[z].getAverageR2())
+            ventralAverageError.append(x.getAllTrajectory(y).getTract()[z].getAverageError())
             q = 0
             while q < fileIndex:
                 ventralExponents.append(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getExponent())
@@ -193,49 +218,33 @@ for x in patientArray:
                     ventralFreqArea.append(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getFreqArea()[o])
                     o += 1
                 q += 1
-            #print('Used: ' + str(z))
             z += 1
         y += 1
-    #print('\n')
 
 print('\n'*2 + 'Ignored the first and last mm!')
 print('Done seperating into Ventral and Dorsal groups!')
 print('Creating Figures!' + '\n'*2)
-jitterPlotDorsal = []
-jitterPlotVentral = []
 
 num = 0
 
-while num < len(dorsalExponents):
-    jitterPlotDorsal.append(uniform(-0.1, 0.1))
+while num < len(dorsalAverageExponents):
+    jitterAveragePlotDorsal.append(uniform(-0.1, 0.1))
     num += 1
 
 num = 0
 
-while num < len(ventralExponents):
-    jitterPlotVentral.append(uniform(-0.1, 0.1))
+while num < len(ventralAverageExponents):
+    jitterAveragePlotVentral.append(uniform(-0.1, 0.1))
     num += 1
 
+print('Points in Dorsal: ' + str(len(jitterAveragePlotDorsal)))
+print('Points in Ventral: ' + str(len(jitterAveragePlotVentral)) + '\n'*2)
 
-binPeak = [0,10,20,30,40,50,60]
-binArea = [0,1,2,3,4,5,6,7,8,9,10]
-pointAlpha = 0.2
+#The bin edges and the alpha for the scatter plots can be changed at the top of the file called, binPeak, binArea, and pointAlpha
 
-print('Points in Dorsal: ' + str(len(jitterPlotDorsal)))
-print('Points in Ventral: ' + str(len(jitterPlotVentral)) + '\n'*2)
-
-createFigure('Dorsal',dataPath, jitterPlotDorsal, dorsalError, dorsalExponents,dorsalOffset, dorsalR2, dorsalPeakFreq, dorsalFreqArea, binPeak, binArea, pointAlpha)
-createFigure('Ventral',dataPath, jitterPlotVentral, ventralError, ventralExponents,ventralOffset, ventralR2, ventralPeakFreq, ventralFreqArea, binPeak, binArea, pointAlpha)
-
+createFigure('Dorsal' + str(mmToTest) + 'mm',dataPath, jitterAveragePlotDorsal, dorsalAverageError, dorsalAverageExponents,dorsalAverageOffset, dorsalAverageR2, dorsalPeakFreq, dorsalFreqArea, binPeak, binArea, pointAlpha)
+createFigure('Ventral' + str(mmToTest) + 'mm',dataPath, jitterAveragePlotVentral, ventralAverageError, ventralAverageExponents,ventralAverageOffset, ventralAverageR2, ventralPeakFreq, ventralFreqArea, binPeak, binArea, pointAlpha)
 
 print('\n'*2 + 'Saved figures in ' + dataPath + '!')
 plt.show()
 print('Done!')
-
-#plt.savefig('/Users/talhakhalil/Desktop/my_new_figure.png', transparent = False, bbox_inches = 'tight')
-#plt.show()
-
-#Saving a figure
-#print (val['background_params'])
-#print (val['peak_params'])
-

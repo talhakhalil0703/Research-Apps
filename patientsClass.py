@@ -51,6 +51,26 @@ class mmFile:
         return self.__name
     def getResultsFilesLen(self):
         return len(self.__resultsFiles)
+    def getAverageExponent(self):
+        sum = []
+        for x in self.__resultsFiles:
+            sum.append(x.getExponent())
+        return average(sum)
+    def getAverageOffset(self):
+        sum = []
+        for x in self.__resultsFiles:
+            sum.append(x.getOffset())
+        return average(sum)
+    def getAverageR2(self):
+        sum = []
+        for x in self.__resultsFiles:
+            sum.append(x.getR2())
+        return average(sum)
+    def getAverageError(self):
+        sum = []
+        for x in self.__resultsFiles:
+            sum.append(x.getError())
+        return average(sum)
 
 class IndividualFile:
     def __init__(self, name):
@@ -90,3 +110,7 @@ class IndividualFile:
         return self.__error
     def getName(self):
         return self.__name
+
+def average(list):
+    return sum(list)/len(list)
+
