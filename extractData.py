@@ -1,4 +1,4 @@
-def extractData(patientArray, dorsal, ventral, mm):
+def extractData(patientArray, dorsal, ventral, mm): #Goes from Dorsal and Ventral, and goes mmToTest millimeter away to collect data
     mmToTest = mm
 
     for x in patientArray:
@@ -15,21 +15,21 @@ def extractData(patientArray, dorsal, ventral, mm):
                         z += 1
                         continue
                 fileIndex = x.getAllTrajectory(y).getTract()[z].getResultsFilesLen()
-                dorsal[4].append(x.getAllTrajectory(y).getTract()[z].getAverageExponent())
-                dorsal[5].append(x.getAllTrajectory(y).getTract()[z].getAverageOffset())
-                dorsal[6].append(x.getAllTrajectory(y).getTract()[z].getAverageR2())
-                dorsal[7].append(x.getAllTrajectory(y).getTract()[z].getAverageError())
+                dorsal.appendAverageExponents(x.getAllTrajectory(y).getTract()[z].getAverageExponent())
+                dorsal.appendAverageOffset(x.getAllTrajectory(y).getTract()[z].getAverageOffset())
+                dorsal.appendAverageR2(x.getAllTrajectory(y).getTract()[z].getAverageR2())
+                dorsal.appendAverageError(x.getAllTrajectory(y).getTract()[z].getAverageError())
                 q = 0
                 while q < fileIndex:
-                    dorsal[0].append(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getExponent())
-                    dorsal[1].append(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getOffset())
-                    dorsal[3].append(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getError())
-                    dorsal[2].append(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getR2())
+                    dorsal.appendExponents(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getExponent())
+                    dorsal.appendOffset(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getOffset())
+                    dorsal.appendError(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getError())
+                    dorsal.appendR2(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getR2())
                     freqIndex = x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getFreqLen()
                     o = 0
                     while o < freqIndex:
-                        dorsal[8].append(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getFreq()[o])
-                        dorsal[9].append(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getFreqArea()[o])
+                        dorsal.appendPeakFreq(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getFreq()[o])
+                        dorsal.appendFreqArea(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getFreqArea()[o])
                         o += 1
                     q += 1
                 z += 1
@@ -43,21 +43,21 @@ def extractData(patientArray, dorsal, ventral, mm):
                         z += 1
                         continue
                 fileIndex = x.getAllTrajectory(y).getTract()[z].getResultsFilesLen()
-                ventral[4].append(x.getAllTrajectory(y).getTract()[z].getAverageExponent())
-                ventral[5].append(x.getAllTrajectory(y).getTract()[z].getAverageOffset())
-                ventral[6].append(x.getAllTrajectory(y).getTract()[z].getAverageR2())
-                ventral[7].append(x.getAllTrajectory(y).getTract()[z].getAverageError())
+                ventral.appendAverageExponents(x.getAllTrajectory(y).getTract()[z].getAverageExponent())
+                ventral.appendAverageOffset(x.getAllTrajectory(y).getTract()[z].getAverageOffset())
+                ventral.appendAverageR2(x.getAllTrajectory(y).getTract()[z].getAverageR2())
+                ventral.appendAverageError(x.getAllTrajectory(y).getTract()[z].getAverageError())
                 q = 0
                 while q < fileIndex:
-                    ventral[0].append(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getExponent())
-                    ventral[1].append(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getOffset())
-                    ventral[3].append(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getError())
-                    ventral[2].append(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getR2())
+                    ventral.appendExponents(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getExponent())
+                    ventral.appendOffset(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getOffset())
+                    ventral.appendError(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getError())
+                    ventral.appendR2(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getR2())
                     freqIndex = x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getFreqLen()
                     o = 0
                     while o < freqIndex:
-                        ventral[8].append(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getFreq()[o])
-                        ventral[9].append(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getFreqArea()[o])
+                        ventral.appendPeakFreq(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getFreq()[o])
+                        ventral.appendFreqArea(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getFreqArea()[o])
                         o += 1
                     q += 1
                 z += 1
@@ -65,4 +65,5 @@ def extractData(patientArray, dorsal, ventral, mm):
 
     print('\n'*2 + 'Ignored the first and last mm!')
     print('Done seperating into Ventral and Dorsal groups!')
+
 

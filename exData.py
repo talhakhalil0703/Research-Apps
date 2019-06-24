@@ -17,8 +17,9 @@ from patientsClass import mmFile
 from patientsClass import FullTract
 from getTracts import getTracts # Start, End, allFiles
 from getData import getDataForPatient #patient, resultFile, dataPath
-from createFigures import createFigure
-from extractData import extractData
+from createFigures import createFigure# name to save as, datapath, dorsal/ventral, bin for peak, bin for area, alpha for point, and boolean to determine if you want to use the average values for the mm or to use each file
+from extractData import extractData #Patient Array, Dorsal, Ventral, mmToTest
+from brainSectionClass import brainSection
 
 print('Adding Paths....')
 eng = matlab.engine.start_matlab()
@@ -40,30 +41,8 @@ binArea = [0,1,2,3,4,5,6,7,8,9,10] #Same as above but for the frequency areas
 pointAlpha = 0.2 # This is the tranparency of the points on the scatter plots
 
 #These are all the lists that will end up holding the data for the use of figure creation, they are not really organized in a good manner. You can get specific data points by using the class Patient
-dorsalExponents = []
-dorsalOffset = []
-dorsalR2 = []
-dorsalError = []
-dorsalAverageExponents = []
-dorsalAverageOffset = []
-dorsalAverageR2 = []
-dorsalAverageError = []
-dorsalPeakFreq = []
-dorsalFreqArea = []
-dorsal = [dorsalExponents, dorsalOffset, dorsalR2, dorsalError, dorsalAverageExponents, dorsalAverageOffset, dorsalAverageR2, dorsalAverageError, dorsalPeakFreq, dorsalFreqArea]
-
-ventralExponents = []
-ventralR2 = []
-ventralOffset = []
-ventralError = []
-ventralAverageExponents = []
-ventralAverageR2 = []
-ventralAverageOffset = []
-ventralAverageError = []
-ventralPeakFreq = []
-ventralFreqArea = []
-ventral = [ventralExponents, ventralOffset, ventralR2, ventralError, ventralAverageExponents, ventralAverageOffset, ventralAverageR2, ventralAverageError, ventralPeakFreq, ventralFreqArea]
-
+dorsal = brainSection('Dorsal')
+ventral = brainSection('Ventral')
 
 doNotRun = findFileNames(dataPath + '/TossData.txt')#Removing bad Data from analysis
 doNotRun += findFileNames(dataPath + '/FilesWithTests.txt')#Removing tests from analysis
