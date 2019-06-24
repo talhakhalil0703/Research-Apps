@@ -19,6 +19,8 @@ from getTracts import getTracts # Start, End, allFiles
 from getData import getDataForPatient #patient, resultFile, dataPath
 from createFigures import createFigure# name to save as, datapath, dorsal/ventral, bin for peak, bin for area, alpha for point, and boolean to determine if you want to use the average values for the mm or to use each file
 from extractData import extractData #Patient Array, Dorsal, Ventral, mmToTest
+from extractData import extractDataFromMiddle
+from extractData import getDataGreatestLength
 from brainSectionClass import brainSection
 
 print('Adding Paths....')
@@ -141,14 +143,26 @@ for x in patientArray:
 
 print('\n'*2 + 'All trajectories have been stored!')
 
-extractData(patientArray, dorsal, ventral, mmToTest)
-
-print('Creating Figures!' + '\n'*2)
 
 #The bin edges and the alpha for the scatter plots can be changed at the top of the file called, binPeak, binArea, and pointAlpha
 
-createFigure('Dorsal' + str(mmToTest) + 'mm',dataPath, dorsal, binPeak, binArea, pointAlpha, True)
-createFigure('Ventral' + str(mmToTest) + 'mm',dataPath, ventral, binPeak, binArea, pointAlpha, True)
+if mmToTest == 0:
+    greatestLength = getDataGreatestLength(patientArray, dorsal, ventral)
+    print(greatestLength)
+    q = 1
+    while q <= greatestLength:
+        dorsal = brainSection('Dorsal')
+        ventral = brainSection('Ventral')
+        extractDataFromMiddle(patientArray, dorsal, ventral, q)
+        createFigure('Dorsal ' + str(q) + 'mm',dataPath, dorsal, binPeak, binArea, pointAlpha, True)
+        createFigure('Ventral ' + str(q) + 'mm',dataPath, ventral, binPeak, binArea, pointAlpha, True)
+        q += 1
+else:
+    extractDataFromMiddle(patientArray, dorsal, ventral, mmToTest)
+    createFigure('Dorsal ' + str(mmToTest) + 'mm',dataPath, dorsal, binPeak, binArea, pointAlpha, True)
+    createFigure('Ventral ' + str(mmToTest) + 'mm',dataPath, ventral, binPeak, binArea, pointAlpha, True)
+
+print('Creating Figures!' + '\n'*2)
 
 print('\n'*2 + 'Saved figures in ' + dataPath + '!')
 plt.show()

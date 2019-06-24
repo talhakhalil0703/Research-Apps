@@ -32,6 +32,8 @@ class FullTract:
         self.__Tract = tract.copy()
     def getTract (self):
         return self.__Tract
+    def removeTract(self, i):
+        del(self.__Tract[i])
     def getTractLen(self):
         return len(self.__Tract)
 
