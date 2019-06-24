@@ -9,6 +9,7 @@ import matlab.engine
 from iteration_utilities import duplicates
 from iteration_utilities import unique_everseen
 from random import uniform
+import openpyxl
 
 from obtainFilesText import findFileNames
 from patientsClass import Patient
@@ -23,6 +24,9 @@ from extractData import extractDataFromMiddle
 from extractData import getDataGreatestLength
 from brainSectionClass import brainSection
 
+def getAverage(list):
+    return sum(list)/len(list)
+
 print('Adding Paths....')
 eng = matlab.engine.start_matlab()
 eng.loadPath(nargout = 0)
@@ -31,8 +35,8 @@ print('\n' * 2)
 dataPath = '/Users/talhakhalil/Desktop/Research/Data'
 print('This is your data path, ' + dataPath)
 
-mmToTest = int(input('How many mm do you want to test? (0, would mean to test all!)\n'))
-
+#mmToTest = int(input('How many mm do you want to test? (0, would mean to test all!)\n'))
+mmToTest = 0
 if mmToTest == 0 :
     print('Going to test: All mm')
 else:
@@ -146,6 +150,8 @@ print('\n'*2 + 'All trajectories have been stored!')
 
 #The bin edges and the alpha for the scatter plots can be changed at the top of the file called, binPeak, binArea, and pointAlpha
 
+wb = openpyxl.Workbook()
+sheet = wb.create_sheet('Patients Average Data')
 if mmToTest == 0:
     greatestLength = getDataGreatestLength(patientArray, dorsal, ventral)
     print(greatestLength)
@@ -154,16 +160,26 @@ if mmToTest == 0:
         dorsal = brainSection('Dorsal')
         ventral = brainSection('Ventral')
         extractDataFromMiddle(patientArray, dorsal, ventral, q)
-        createFigure('Dorsal ' + str(q) + 'mm',dataPath, dorsal, binPeak, binArea, pointAlpha, True)
-        createFigure('Ventral ' + str(q) + 'mm',dataPath, ventral, binPeak, binArea, pointAlpha, True)
+        sheet['A' + str(q)] = 'Points in: ' + str(len(dorsal.getAverageError()))
+        sheet['B' + str(q)] = 'Dorsal Slope Average For : ' + str(q) + ' mm'
+        sheet['C' + str(q)] = getAverage(dorsal.getAverageExponents())
+        sheet['D' + str(q)] = 'Dorsal Offset Average For : ' + str(q) + ' mm'
+        sheet['E' + str(q)] = getAverage(dorsal.getAverageOffset())
+        sheet['F' + str(q)] = 'Ventral Slope Average For : ' + str(q) + ' mm'
+        sheet['G' + str(q)] = getAverage(ventral.getAverageExponents())
+        sheet['H' + str(q)] = 'Ventral Offset Average For : ' + str(q) + ' mm'
+        sheet['I' + str(q)] = getAverage(ventral.getAverageOffset())
+        createFigure('Dorsal ' + str(q) + ' mm',dataPath, dorsal, binPeak, binArea, pointAlpha, True)
+        createFigure('Ventral ' + str(q) + ' mm',dataPath, ventral, binPeak, binArea, pointAlpha, True)
         q += 1
 else:
     extractDataFromMiddle(patientArray, dorsal, ventral, mmToTest)
-    createFigure('Dorsal ' + str(mmToTest) + 'mm',dataPath, dorsal, binPeak, binArea, pointAlpha, True)
-    createFigure('Ventral ' + str(mmToTest) + 'mm',dataPath, ventral, binPeak, binArea, pointAlpha, True)
+    createFigure('Dorsal ' + str(mmToTest) + ' mm',dataPath, dorsal, binPeak, binArea, pointAlpha, True)
+    createFigure('Ventral ' + str(mmToTest) + ' mm',dataPath, ventral, binPeak, binArea, pointAlpha, True)
 
-print('Creating Figures!' + '\n'*2)
-
+print('Creating Figures!')
+print('Creating Excel Files')
+wb.save(dataPath + '/Average Patient Data.xlsx')
 print('\n'*2 + 'Saved figures in ' + dataPath + '!')
-plt.show()
+#plt.show()
 print('Done!')

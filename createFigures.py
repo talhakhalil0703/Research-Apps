@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
-import statistics
 from random import uniform
+
+def average(list):
+    return sum(list)/len(list)
 
 def createFigure(name, dataPath, container, binPeak, binArea, palpha, average):
 
@@ -17,12 +19,12 @@ def createFigure(name, dataPath, container, binPeak, binArea, palpha, average):
         err.set_title('Error')
         exp.scatter(jitter, container.getAverageExponents(), alpha = palpha)
         exp.boxplot(container.getAverageExponents(), showcaps = True, notch = True)
-        print(name +': Slope median: '+ str(statistics.median(container.getAverageExponents())))
+        print(name +': Slope median: '+ str(sum(container.getAverageExponents())/len(container.getAverageExponents())))
         exp.set_title('Slope')
         off.scatter(jitter, container.getAverageOffset(), alpha = palpha)
         off.set_title('Offset')
         off.boxplot(container.getAverageOffset(), showcaps = True, notch = True)
-        print(name +': Offset median: '+ str(statistics.median(container.getAverageOffset())))
+        print(name +': Offset median: '+ str(sum(container.getAverageOffset())/len(container.getAverageOffset())))
         r2.scatter(jitter, container.getAverageR2(), alpha = palpha)
         r2.set_title('R^2')
 
@@ -35,12 +37,12 @@ def createFigure(name, dataPath, container, binPeak, binArea, palpha, average):
         err.set_title('Error')
         exp.scatter(jitter, container.getExponents(), alpha = palpha)
         exp.boxplot(container.getExponents(), showcaps = True, notch = True)
-        print(name +': Slope median: '+ str(statistics.median(container.getExponents())))
+        print(name +': Slope median: '+ str(sum(container.getExponents())/len(container.getExponents())))
         exp.set_title('Slope')
         off.scatter(jitter, container.getOffset(), alpha = palpha)
         off.set_title('Offset')
         off.boxplot(container.getOffset(), showcaps = True, notch = True)
-        print(name +': Offset median: '+ str(statistics.median(container.getOffset())))
+        print(name +': Offset median: '+ str(sum(container.getOffset())/len(container.getOffset())))
         r2.scatter(jitter, container.getR2(), alpha = palpha)
         r2.set_title('R^2')
 
