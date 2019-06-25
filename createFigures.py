@@ -19,46 +19,38 @@ def createFigure(name, dataPath, container, binPeak, binArea, palpha, average):
     area = plt.subplot(245)
     alpha = plt.subplot(144)
     scale = 1.1
-
+    jitterAmount = 0.05
+    
     if average == True:
         num = 0
         while num < len(container.getAverageError()):
-            jitter.append(uniform(-0.1, 0.1))
+            jitter.append(uniform(-jitterAmount, jitterAmount))
             num += 1
         err.scatter(jitter, container.getAverageError(), alpha = palpha)
         err.axis([-0.3, 0.3, 0, max(container.getAverageError())* scale])
-        err.set_title('Error')
         exp.scatter(jitter, container.getAverageExponents(), alpha = palpha)
-        exp.axis([-0.3, 0.3, 0, max(container.getAverageExponents())* scale])
+        exp.axis([-0.3, 1.3, 0, max(container.getAverageExponents())* scale])
         exp.boxplot(container.getAverageExponents(), showcaps = True, notch = True)
-        exp.set_title('Slope')
         off.scatter(jitter, container.getAverageOffset(), alpha = palpha)
-        off.axis([-0.3, 0.3, 0, max(container.getAverageOffset())* scale])
-        off.set_title('Offset')
+        off.axis([-0.3, 1.3, 0, max(container.getAverageOffset())* scale])
         off.boxplot(container.getAverageOffset(), showcaps = True, notch = True)
         r2.scatter(jitter, container.getAverageR2(), alpha = palpha)
         r2.axis([-0.3, 0.3, 0, max(container.getAverageR2())* scale])
-        r2.set_title('R^2')
-
     elif average == False:
         num = 0
         while num < len(container.getError()):
-            jitter.append(uniform(-0.1, 0.1))
+            jitter.append(uniform(-jitterAmount, jitterAmount))
             num += 1
         err.scatter(jitter, container.getError(), alpha = palpha)
-        err.axis([-0.3, 0.3, 0, max(container.getError()) * scale])
-        err.set_title('Error')
+        err.axis([-0.3, 1.3, 0, max(container.getError()) * scale])
         exp.scatter(jitter, container.getExponents(), alpha = palpha)
         exp.axis([-0.3, 0.3, 0, max(container.getExponents())* scale])
         exp.boxplot(container.getExponents(), showcaps = True, notch = True)
-        exp.set_title('Slope')
         off.scatter(jitter, container.getOffset(), alpha = palpha)
-        off.axis([-0.3, 0.3, 0, max(container.getOffset())* scale])
-        off.set_title('Offset')
+        off.axis([-0.3, 1.3, 0, max(container.getOffset())* scale])
         off.boxplot(container.getOffset(), showcaps = True, notch = True)
         r2.scatter(jitter, container.getR2(), alpha = palpha)
         r2.axis([-0.3, 0.3, 0, max(container.getR2())* scale])
-        r2.set_title('R^2')
 
     peakLen = container.getFreqLen()
     x = 0
@@ -74,11 +66,11 @@ def createFigure(name, dataPath, container, binPeak, binArea, palpha, average):
     alphaJitter = []
     num = 0
     while num < len(betaArea):
-        betaJitter.append(uniform(-0.1, 0.1))
+        betaJitter.append(uniform(-jitterAmount, jitterAmount))
         num += 1
     num = 0
     while num < len(alphaArea):
-        alphaJitter.append(uniform(-0.1, 0.1))
+        alphaJitter.append(uniform(-jitterAmount, jitterAmount))
         num += 1
     scatter = []
     scatter.append(betaArea)
@@ -87,6 +79,17 @@ def createFigure(name, dataPath, container, binPeak, binArea, palpha, average):
     jitterscatter.append(betaJitter)
     jitterscatter.append(alphaJitter)
     labels = ['Beta' , 'Alpha']
+
+    exp.xaxis.set_visible(False)
+    off.xaxis.set_visible(False)
+    r2.xaxis.set_visible(False)
+    err.xaxis.set_visible(False)
+
+    err.set_title('Error')
+    off.set_title('Offset')
+    exp.set_title('Slope')     
+    r2.set_title('R^2')     
+
     peak.hist(container.getPeakFreq(), rwidth = .9, bins = binPeak, density = True)
     peak.axis([binPeak[0], binPeak[-1], 0, 0.06])
     peak.set_title('Peak Frequencies')

@@ -8,7 +8,7 @@ def extractData(patientArray, dorsal, ventral, mm): #Goes from Dorsal and Ventra
             z = 0
             while z < dorsalIndex:
                 if z == 0: #ignoring the first mm
-                    z += 1
+                    z += 1 
                     continue
                 if mmToTest != 0:
                     if z > (mmToTest):
@@ -75,7 +75,7 @@ def extractDataFromMiddle(patientArray, dorsal, ventral, mmToTest):
             if tractLength % 2 == 1:
                 x.getAllTrajectory(y).removeTract(tractLength - 1)
                 tractLength = x.getAllTrajectory(y).getTractLen()
-                print('Cutout a mm from ventral to make length even for: ' +  str(x.getName()) + 'Tract ' + str(y))
+                #print('Cutout a mm from ventral to make length even for: ' +  str(x.getName()) + 'Tract ' + str(y))
 
             ventralIndex = tractLength // 2 #Ventral mm part starts at this index, below this index is dorsal
 
@@ -139,7 +139,7 @@ def getDataGreatestLength(patientArray, dorsal, ventral):
             if tractLength % 2 == 1:
                 x.getAllTrajectory(y).removeTract(tractLength - 1)
                 tractLength = x.getAllTrajectory(y).getTractLen()
-                print('Cutout a mm from ventral to make length even for: ' +  str(x.getName()) + 'Tract ' + str(y))
+                #print('Cutout a mm from ventral to make length even for: ' +  str(x.getName()) + 'Tract ' + str(y))
 
             ventralIndex = tractLength // 2 #Ventral mm part starts at this index, below this index is dorsal
             if ventralIndex > greatest:

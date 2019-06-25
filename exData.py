@@ -154,6 +154,7 @@ sheet = wb.create_sheet('Patients Average Data')
 if mmToTest == 0:
     greatestLength = getDataGreatestLength(patientArray, dorsal, ventral)
     print('Cutout a mm from ventral to make length even for tracts!')
+    print('Creating Figures!')
     q = 1
     while q <= greatestLength:
         dorsal = brainSection('Dorsal')
@@ -175,9 +176,10 @@ else:
     extractDataFromMiddle(patientArray, dorsal, ventral, mmToTest)
     createFigure('Dorsal ' + str(mmToTest) + ' mm',dataPath, dorsal, binPeak, binArea, pointAlpha, True)
     createFigure('Ventral ' + str(mmToTest) + ' mm',dataPath, ventral, binPeak, binArea, pointAlpha, True)
-print('Creating Figures!')
+print('Loading Figures!')
 print('Creating Excel Files')
 wb.save(dataPath + '/Patients Data.xlsx')
 print('Saved figures in ' + dataPath + '!')
 plt.show()
+print('Figures Loaded!')
 print('Done!')
