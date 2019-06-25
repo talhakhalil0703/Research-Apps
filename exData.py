@@ -1,6 +1,8 @@
 #Modules needed, scipy, matplotlib, iteration_utilities, you also need the loadPath matlab inside it you can see what modules in matlab you need
 #Talha Khalil June 2019
 
+import time
+before = time.time()
 import scipy.io as sio
 import os
 import re
@@ -28,7 +30,7 @@ from brainSectionClass import brainSection
 def getAverage(list):
     return sum(list)/len(list)
 
-print('Adding Paths....')
+print('Adding Matlab Paths....')
 eng = matlab.engine.start_matlab()
 eng.loadPath(nargout = 0)
 print(', Ignore the Warnings.')
@@ -179,7 +181,8 @@ else:
     createFigure('Dorsal ' + str(mmToTest) + ' mm',dataPath, dorsal, binPeak, binArea, pointAlpha, True)
     createFigure('Ventral ' + str(mmToTest) + ' mm',dataPath, ventral, binPeak, binArea, pointAlpha, True)
 print('Loading Figures!')
-print('Creating Excel Files')
+print('Saving Excel Files')
 wb.save(dataPath + '/Patients Data.xlsx')
 print('Saved figures in ' + dataPath + '!')
-print('Done!')
+after = time.time()
+print('Done! Time taken: ' + str(int(after-before)) + ' seconds')

@@ -4,6 +4,46 @@
 		"selected_items":
 		[
 			[
+				"getR",
+				"getResultsFilesLen"
+			],
+			[
+				"getTrac",
+				"getTractLen"
+			],
+			[
+				"jitter",
+				"jitterscatter"
+			],
+			[
+				"beta",
+				"betaArea"
+			],
+			[
+				"alpa",
+				"alphaJitter"
+			],
+			[
+				"alpha",
+				"alphaArea"
+			],
+			[
+				"getFreq",
+				"getFreqArea"
+			],
+			[
+				"Offset",
+				"offset"
+			],
+			[
+				"get",
+				"getTract"
+			],
+			[
+				"tra",
+				"trajectoryLen"
+			],
+			[
 				"mm",
 				"mmToTest"
 			]
@@ -12,24 +52,38 @@
 	"buffers":
 	[
 		{
-			"contents": "#Modules needed, scipy, matplotlib, iteration_utilities, you also need the loadPath matlab inside it you can see what modules in matlab you need\n#Talha Khalil June 2019\n\nimport scipy.io as sio\nimport os\nimport re\nimport matplotlib.pyplot as plt\nimport matlab.engine\nfrom iteration_utilities import duplicates\nfrom iteration_utilities import unique_everseen\nfrom random import uniform\nimport openpyxl\n\nfrom obtainFilesText import findFileNames\nfrom patientsClass import Patient\nfrom patientsClass import IndividualFile\nfrom patientsClass import mmFile\nfrom patientsClass import FullTract\nfrom getTracts import getTracts # Start, End, allFiles\nfrom getData import getDataForPatient #patient, resultFile, dataPath\nfrom createFigures import createFigure# name to save as, datapath, dorsal/ventral, bin for peak, bin for area, alpha for point, and boolean to determine if you want to use the average values for the mm or to use each file\nfrom extractData import extractData #Patient Array, Dorsal, Ventral, mmToTest\nfrom extractData import extractDataFromMiddle\nfrom extractData import getDataGreatestLength\nfrom brainSectionClass import brainSection\n\ndef getAverage(list):\n    return sum(list)/len(list)\n\nprint('Adding Paths....')\neng = matlab.engine.start_matlab()\neng.loadPath(nargout = 0)\nprint(', Ignore the Warnings.')\nprint('\\n' * 2)\ndataPath = '/Users/talhakhalil/Desktop/Research/Data'\nprint('This is your data path, ' + dataPath)\n\n#mmToTest = int(input('How many mm do you want to test? (0, would mean to test all!)\\n'))\nmmToTest = 0\nif mmToTest == 0 :\n    print('Going to test: All mm')\nelse:\n    print('Going to test: ' + str(mmToTest) + 'mm')\n\nbinPeak = [0,10,20,30,40,50,60] #These are the bin edges for the peak frequencies figures, you can change these to change how the histogram looks\nbinArea = [0,1,2,3,4,5,6,7,8,9,10] #Same as above but for the frequency areas\npointAlpha = 0.2 # This is the tranparency of the points on the scatter plots\n\n#These are all the lists that will end up holding the data for the use of figure creation, they are not really organized in a good manner. You can get specific data points by using the class Patient\ndorsal = brainSection('Dorsal')\nventral = brainSection('Ventral')\n\ndoNotRun = findFileNames(dataPath + '/TossData.txt')#Removing bad Data from analysis\ndoNotRun += findFileNames(dataPath + '/FilesWithTests.txt')#Removing tests from analysis\ntracts = findFileNames(dataPath + '/Trajectories.txt')#Used to find the starting and end point of trajectories\ndoNotRun.sort()\n\nfileDirectory = []\nfor root, dirs, files in os.walk(dataPath):\n    for file in files:\n        if file.endswith('_fooof_results.mat'):\n            fileDirectory.append(os.path.join(root, file)) #stored the directory with the name.\n\nfileNameResult = re.compile(r'(\\d\\d\\d\\d-\\d\\d\\d\\d)([ABCDEF])?(auto)?(\\d)?(\\d)?')\nfileName = re.compile(r'(\\d\\d\\d\\d-\\d\\d\\d\\d)([ABCDEF])?')\n\nallFiles = []\nfor x in fileDirectory:\n    name = fileName.search(x)\n    if name!= None and name not in allFiles:\n        allFiles.append(name[0])\nallFiles = list(unique_everseen(duplicates(allFiles)))\nallFiles.sort()\n\nallResultFiles = []\nfor x in fileDirectory:\n    name = fileNameResult.search(x)\n    if name!= None and name not in allResultFiles:\n        allResultFiles.append(name[0])\nallResultFiles.sort()\n\nfor x in doNotRun:\n    name = fileNameResult.search(x)\n    if name[3] == None:\n        for y in allResultFiles:\n            remove = fileName.search(y)\n            if x == remove[0]:\n                allResultFiles.remove(y)\n    else:\n        try:\n            allResultFiles.remove(x)\n        except:\n            continue\n\nprint('Do not run files have been removed from analysis!' + '\\n'*2)\n\nstartTract = []\nendTract = []\nendOfTrajectory = False #used to filp flop between start and end points as the text file is written in this way\nfor x in tracts:\n    if endOfTrajectory == True:\n        endTract.append(x)\n        endOfTrajectory = False\n    else:\n        startTract.append(x)\n        endOfTrajectory = True\n\n#Finding all the patient numbers using Tracts, done in case we need to create figures per patient, or any other method of sorting\npatientArray = []\noldPatient = 0\nfindPatientNumber = re.compile(r'(\\d\\d\\d\\d)(-)')\n\nfor x in startTract:\n    patientNumber = findPatientNumber.search(x)\n    patientNumber = int(patientNumber.group(1))\n    if patientNumber != oldPatient:\n        y = Patient(patientNumber)\n        patientArray.append(y)\n        oldPatient = patientNumber\n\nfor x in startTract:\n    patientNumber = findPatientNumber.search(x)\n    patientNumber = int(patientNumber.group(1))\n    for y in patientArray:\n        if y.getName() == patientNumber:\n            y.appendStartTract(x)\n\nfor x in endTract:\n    patientNumber = findPatientNumber.search(x)\n    patientNumber = int(patientNumber.group(1))\n    for y in patientArray:\n        if y.getName() == patientNumber:\n            y.appendEndTract(x)\n\nfor x in patientArray:\n    length = x.getTractLen()\n    i = 0\n    while i < length:\n        tract = FullTract()\n        tract.storeTract(getTracts(x.getStartTract(i), x.getEndTract(i), allFiles))\n        x.appendAllTrajectory(tract)\n        i = i + 1\n        \nwb = openpyxl.Workbook()\nfor x in patientArray:\n    getDataForPatient(x, allResultFiles, dataPath)\n    print('Trajectories for ' + str(x.getName()) + ' have been stored!')\n\nprint('\\n'*2 + 'All trajectories have been stored!')\n\n\n#The bin edges and the alpha for the scatter plots can be changed at the top of the file called, binPeak, binArea, and pointAlpha\n\n\nsheet = wb.create_sheet('Patients Average Data')\nif mmToTest == 0:\n    greatestLength = getDataGreatestLength(patientArray, dorsal, ventral)\n    print(greatestLength)\n    q = 1\n    while q <= greatestLength:\n        dorsal = brainSection('Dorsal')\n        ventral = brainSection('Ventral')\n        extractDataFromMiddle(patientArray, dorsal, ventral, q)\n        sheet['A' + str(q)] = 'Points in: ' + str(len(dorsal.getAverageError()))\n        sheet['B' + str(q)] = 'Dorsal Slope Average For : ' + str(q) + ' mm'\n        sheet['C' + str(q)] = getAverage(dorsal.getAverageExponents())\n        sheet['D' + str(q)] = 'Dorsal Offset Average For : ' + str(q) + ' mm'\n        sheet['E' + str(q)] = getAverage(dorsal.getAverageOffset())\n        sheet['F' + str(q)] = 'Ventral Slope Average For : ' + str(q) + ' mm'\n        sheet['G' + str(q)] = getAverage(ventral.getAverageExponents())\n        sheet['H' + str(q)] = 'Ventral Offset Average For : ' + str(q) + ' mm'\n        sheet['I' + str(q)] = getAverage(ventral.getAverageOffset())\n        createFigure('Dorsal ' + str(q) + ' mm',dataPath, dorsal, binPeak, binArea, pointAlpha, True)\n        createFigure('Ventral ' + str(q) + ' mm',dataPath, ventral, binPeak, binArea, pointAlpha, True)\n        q += 1\nelse:\n    extractDataFromMiddle(patientArray, dorsal, ventral, mmToTest)\n    createFigure('Dorsal ' + str(mmToTest) + ' mm',dataPath, dorsal, binPeak, binArea, pointAlpha, True)\n    createFigure('Ventral ' + str(mmToTest) + ' mm',dataPath, ventral, binPeak, binArea, pointAlpha, True)\nprint('Creating Figures!')\nprint('Creating Excel Files')\nwb.save(dataPath + '/Average Patient Data.xlsx')\nprint('Saved figures in ' + dataPath + '!')\n#plt.show()\nprint('Done!')\n",
 			"file": "exData.py",
-			"file_size": 7240,
-			"file_write_time": 132059015128556877,
 			"settings":
 			{
-				"buffer_size": 7249,
+				"buffer_size": 7307,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"contents": "def extractData(patientArray, dorsal, ventral, mm): #Goes from Dorsal and Ventral, and goes mmToTest millimeter away to collect data\n    mmToTest = mm\n\n    for x in patientArray:\n        y = 0\n        while y < x.getTractLen():\n            dorsalIndex = x.getAllTrajectory(y).getTractLen() // 2\n            z = 0\n            while z < dorsalIndex:\n                if z == 0: #ignoring the first mm\n                    z += 1 \n                    continue\n                if mmToTest != 0:\n                    if z > (mmToTest):\n                        z += 1\n                        continue\n                fileIndex = x.getAllTrajectory(y).getTract()[z].getResultsFilesLen()\n                dorsal.appendAverageExponents(x.getAllTrajectory(y).getTract()[z].getAverageExponent())\n                dorsal.appendAverageOffset(x.getAllTrajectory(y).getTract()[z].getAverageOffset())\n                dorsal.appendAverageR2(x.getAllTrajectory(y).getTract()[z].getAverageR2())\n                dorsal.appendAverageError(x.getAllTrajectory(y).getTract()[z].getAverageError())\n                q = 0\n                while q < fileIndex:\n                    dorsal.appendExponents(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getExponent())\n                    dorsal.appendOffset(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getOffset())\n                    dorsal.appendError(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getError())\n                    dorsal.appendR2(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getR2())\n                    freqIndex = x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getFreqLen()\n                    o = 0\n                    while o < freqIndex:\n                        dorsal.appendPeakFreq(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getFreq()[o])\n                        dorsal.appendFreqArea(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getFreqArea()[o])\n                        o += 1\n                    q += 1\n                z += 1\n\n            while z < x.getAllTrajectory(y).getTractLen():\n                if z == (x.getAllTrajectory(y).getTractLen() - 1): #ignoring the last mm\n                    z += 1\n                    continue\n                if mmToTest != 0:\n                    if z < (x.getAllTrajectory(y).getTractLen() - (mmToTest + 1)):\n                        z += 1\n                        continue\n                fileIndex = x.getAllTrajectory(y).getTract()[z].getResultsFilesLen()\n                ventral.appendAverageExponents(x.getAllTrajectory(y).getTract()[z].getAverageExponent())\n                ventral.appendAverageOffset(x.getAllTrajectory(y).getTract()[z].getAverageOffset())\n                ventral.appendAverageR2(x.getAllTrajectory(y).getTract()[z].getAverageR2())\n                ventral.appendAverageError(x.getAllTrajectory(y).getTract()[z].getAverageError())\n                q = 0\n                while q < fileIndex:\n                    ventral.appendExponents(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getExponent())\n                    ventral.appendOffset(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getOffset())\n                    ventral.appendError(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getError())\n                    ventral.appendR2(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getR2())\n                    freqIndex = x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getFreqLen()\n                    o = 0\n                    while o < freqIndex:\n                        ventral.appendPeakFreq(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getFreq()[o])\n                        ventral.appendFreqArea(x.getAllTrajectory(y).getTract()[z].getResultsFile()[q].getFreqArea()[o])\n                        o += 1\n                    q += 1\n                z += 1\n            y += 1\n\n    print('\\n'*2 + 'Ignored the first and last mm!')\n    print('Done seperating into Ventral and Dorsal groups!')\n\ndef extractDataFromMiddle(patientArray, dorsal, ventral, mmToTest):\n    for x in patientArray:\n        y = 0\n        while y < x.getTractLen():\n\n            tractLength = x.getAllTrajectory(y).getTractLen()\n            if tractLength % 2 == 1:\n                x.getAllTrajectory(y).removeTract(tractLength - 1)\n                tractLength = x.getAllTrajectory(y).getTractLen()\n                print('Cutout a mm from ventral to make length even for: ' +  str(x.getName()) + 'Tract ' + str(y))\n\n            ventralIndex = tractLength // 2 #Ventral mm part starts at this index, below this index is dorsal\n\n            if (mmToTest == 0):\n                print('Cannot be 0 mm away from the middle')\n                y += 1\n                continue\n            if (mmToTest > tractLength // 2):\n                #print('No mm exists at this point for: ' + str(x.getName()) +' Tract ' + str(y) + ' '+ str(mmToTest))\n                y += 1\n                continue\n\n            dorsal.appendAverageExponents(x.getAllTrajectory(y).getTract()[ventralIndex - mmToTest].getAverageExponent())\n            dorsal.appendAverageOffset(x.getAllTrajectory(y).getTract()[ventralIndex - mmToTest].getAverageOffset())\n            dorsal.appendAverageR2(x.getAllTrajectory(y).getTract()[ventralIndex - mmToTest].getAverageR2())\n            dorsal.appendAverageError(x.getAllTrajectory(y).getTract()[ventralIndex - mmToTest].getAverageError())\n            ventral.appendAverageExponents(x.getAllTrajectory(y).getTract()[ventralIndex + mmToTest - 1].getAverageExponent())\n            ventral.appendAverageOffset(x.getAllTrajectory(y).getTract()[ventralIndex + mmToTest - 1].getAverageOffset())\n            ventral.appendAverageR2(x.getAllTrajectory(y).getTract()[ventralIndex + mmToTest - 1].getAverageR2())\n            ventral.appendAverageError(x.getAllTrajectory(y).getTract()[ventralIndex + mmToTest - 1].getAverageError())\n\n            fileIndex = x.getAllTrajectory(y).getTract()[ventralIndex - mmToTest].getResultsFilesLen()\n            q = 0\n            while q < fileIndex:\n                dorsal.appendExponents(x.getAllTrajectory(y).getTract()[ventralIndex - mmToTest].getResultsFile()[q].getExponent())\n                dorsal.appendOffset(x.getAllTrajectory(y).getTract()[ventralIndex - mmToTest].getResultsFile()[q].getOffset())\n                dorsal.appendError(x.getAllTrajectory(y).getTract()[ventralIndex - mmToTest].getResultsFile()[q].getError())\n                dorsal.appendR2(x.getAllTrajectory(y).getTract()[ventralIndex - mmToTest].getResultsFile()[q].getR2())\n                freqIndex = x.getAllTrajectory(y).getTract()[ventralIndex - mmToTest].getResultsFile()[q].getFreqLen()\n                o = 0\n                while o < freqIndex:\n                    dorsal.appendPeakFreq(x.getAllTrajectory(y).getTract()[ventralIndex - mmToTest].getResultsFile()[q].getFreq()[o])\n                    dorsal.appendFreqArea(x.getAllTrajectory(y).getTract()[ventralIndex - mmToTest].getResultsFile()[q].getFreqArea()[o])\n                    o += 1\n                q += 1\n\n            fileIndex = x.getAllTrajectory(y).getTract()[ventralIndex + mmToTest - 1].getResultsFilesLen()\n            q = 0\n            while q < fileIndex:\n                ventral.appendExponents(x.getAllTrajectory(y).getTract()[ventralIndex + mmToTest - 1].getResultsFile()[q].getExponent())\n                ventral.appendOffset(x.getAllTrajectory(y).getTract()[ventralIndex + mmToTest - 1].getResultsFile()[q].getOffset())\n                ventral.appendError(x.getAllTrajectory(y).getTract()[ventralIndex + mmToTest - 1].getResultsFile()[q].getError())\n                ventral.appendR2(x.getAllTrajectory(y).getTract()[ventralIndex + mmToTest - 1].getResultsFile()[q].getR2())\n                freqIndex = x.getAllTrajectory(y).getTract()[ventralIndex + mmToTest - 1].getResultsFile()[q].getFreqLen()\n                o = 0\n                while o < freqIndex:\n                    ventral.appendPeakFreq(x.getAllTrajectory(y).getTract()[ventralIndex + mmToTest - 1].getResultsFile()[q].getFreq()[o])\n                    ventral.appendFreqArea(x.getAllTrajectory(y).getTract()[ventralIndex + mmToTest - 1].getResultsFile()[q].getFreqArea()[o])\n                    o += 1\n                q += 1\n            y += 1\n\ndef getDataGreatestLength(patientArray, dorsal, ventral):\n    greatest  = 0\n\n    for x in patientArray:\n        y = 0\n        while y < x.getTractLen():\n\n            tractLength = x.getAllTrajectory(y).getTractLen()\n            if tractLength % 2 == 1:\n                x.getAllTrajectory(y).removeTract(tractLength - 1)\n                tractLength = x.getAllTrajectory(y).getTractLen()\n                print('Cutout a mm from ventral to make length even for: ' +  str(x.getName()) + 'Tract ' + str(y))\n\n            ventralIndex = tractLength // 2 #Ventral mm part starts at this index, below this index is dorsal\n            if ventralIndex > greatest:\n                greatest = ventralIndex\n            y += 1\n    return greatest\n",
-			"file": "extractData.py",
-			"file_size": 9036,
-			"file_write_time": 132058837384089510,
+			"file": "getData.py",
 			"settings":
 			{
-				"buffer_size": 9037,
+				"buffer_size": 1643,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "storeExcelData.py",
+			"settings":
+			{
+				"buffer_size": 1557,
+				"encoding": "UTF-8",
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "extractData.py",
+			"settings":
+			{
+				"buffer_size": 9072,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
@@ -37,7 +91,8 @@
 			"file": "createFigures.py",
 			"settings":
 			{
-				"buffer_size": 2548,
+				"buffer_size": 3913,
+				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		}
@@ -95,6 +150,10 @@
 	],
 	"file_history":
 	[
+		"/Users/talhakhalil/Desktop/Research/ResearchCode/getTracts.py",
+		"/Users/talhakhalil/Desktop/Research/ResearchCode/createFigures.py",
+		"/Users/talhakhalil/Desktop/Research/ResearchCode/scatter2.py",
+		"/Users/talhakhalil/Desktop/Research/ResearchCode/storeExcelData.py",
 		"/Users/talhakhalil/Desktop/Research/ResearchCode/exData.py",
 		"/Users/talhakhalil/Desktop/PetMinder/app.js",
 		"/Users/talhakhalil/PythonScripts/hello.bat",
@@ -154,15 +213,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7249,
+						"buffer_size": 7307,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								5277,
-								5277
+								707,
+								707
 							]
 						],
 						"settings":
@@ -180,19 +239,19 @@
 				},
 				{
 					"buffer": 1,
-					"file": "extractData.py",
+					"file": "getData.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 9037,
+						"buffer_size": 1643,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								558,
-								558
+								987,
+								987
 							]
 						],
 						"settings":
@@ -202,27 +261,86 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2167.0,
+						"translation.y": 67.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "createFigures.py",
-					"semi_transient": true,
+					"file": "storeExcelData.py",
+					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2548,
+						"buffer_size": 1557,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								947,
+								947
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 181.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "extractData.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9072,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8658,
+								8658
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2200.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "createFigures.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3913,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								532,
+								532
 							]
 						],
 						"settings":
@@ -235,7 +353,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 4,
 					"type": "text"
 				}
 			]
@@ -247,7 +365,7 @@
 	},
 	"input":
 	{
-		"height": 0.0
+		"height": 68.0
 	},
 	"layout":
 	{
