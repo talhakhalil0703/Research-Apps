@@ -32,6 +32,8 @@ class brainSection:
         return self.__peakFreq
     def getFreqArea(self):
         return self.__freqArea
+    def getFreqLen(self):
+        return len(self.__peakFreq)
     def appendExponents(self, i):
         return self.__exponents.append(i)
     def appendOffset(self, i):
