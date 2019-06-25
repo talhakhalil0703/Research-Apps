@@ -93,7 +93,7 @@ for x in doNotRun:
         except:
             continue
 
-print('Do not run files have been removed from analysis!' + '\n'*2)
+print('Do not run files have been removed from analysis!')
 
 startTract = []
 endTract = []
@@ -146,17 +146,14 @@ wb = openpyxl.Workbook()
 for x in patientArray:
     getDataForPatient(x, allResultFiles, dataPath)
     storeExcelData(x, wb)
-    print('Trajectories for ' + str(x.getName()) + ' have been stored!')
-
-print('\n'*2 + 'All trajectories have been stored!')
-
+print('Trajectories have been stored!')
 
 #The bin edges and the alpha for the scatter plots can be changed at the top of the file called, binPeak, binArea, and pointAlpha
-
 
 sheet = wb.create_sheet('Patients Average Data')
 if mmToTest == 0:
     greatestLength = getDataGreatestLength(patientArray, dorsal, ventral)
+    print('Cutout a mm from ventral to make length even for tracts!')
     q = 1
     while q <= greatestLength:
         dorsal = brainSection('Dorsal')
@@ -180,7 +177,7 @@ else:
     createFigure('Ventral ' + str(mmToTest) + ' mm',dataPath, ventral, binPeak, binArea, pointAlpha, True)
 print('Creating Figures!')
 print('Creating Excel Files')
-wb.save(dataPath + '/Average Patient Data.xlsx')
+wb.save(dataPath + '/Patients Data.xlsx')
 print('Saved figures in ' + dataPath + '!')
 plt.show()
 print('Done!')
