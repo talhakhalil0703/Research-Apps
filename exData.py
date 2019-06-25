@@ -22,6 +22,7 @@ from createFigures import createFigure# name to save as, datapath, dorsal/ventra
 from extractData import extractData #Patient Array, Dorsal, Ventral, mmToTest
 from extractData import extractDataFromMiddle
 from extractData import getDataGreatestLength
+from storeExcelData import storeExcelData
 from brainSectionClass import brainSection
 
 def getAverage(list):
@@ -61,8 +62,8 @@ for root, dirs, files in os.walk(dataPath):
         if file.endswith('_fooof_results.mat'):
             fileDirectory.append(os.path.join(root, file)) #stored the directory with the name.
 
-fileNameResult = re.compile(r'(\d\d\d\d-\d\d\d\d)([ABCDEF])?(auto)?(\d)?(\d)?');
-fileName = re.compile(r'(\d\d\d\d-\d\d\d\d)([ABCDEF])?');
+fileNameResult = re.compile(r'(\d\d\d\d-\d\d\d\d)([ABCDEF])?(auto)?(\d)?(\d)?')
+fileName = re.compile(r'(\d\d\d\d-\d\d\d\d)([ABCDEF])?')
 
 allFiles = []
 for x in fileDirectory:
@@ -140,9 +141,11 @@ for x in patientArray:
         tract.storeTract(getTracts(x.getStartTract(i), x.getEndTract(i), allFiles))
         x.appendAllTrajectory(tract)
         i = i + 1
-
+        
+wb = openpyxl.Workbook()
 for x in patientArray:
     getDataForPatient(x, allResultFiles, dataPath)
+    storeExcelData(x, wb)
     print('Trajectories for ' + str(x.getName()) + ' have been stored!')
 
 print('\n'*2 + 'All trajectories have been stored!')
@@ -150,7 +153,7 @@ print('\n'*2 + 'All trajectories have been stored!')
 
 #The bin edges and the alpha for the scatter plots can be changed at the top of the file called, binPeak, binArea, and pointAlpha
 
-wb = openpyxl.Workbook()
+
 sheet = wb.create_sheet('Patients Average Data')
 if mmToTest == 0:
     greatestLength = getDataGreatestLength(patientArray, dorsal, ventral)
@@ -176,10 +179,9 @@ else:
     extractDataFromMiddle(patientArray, dorsal, ventral, mmToTest)
     createFigure('Dorsal ' + str(mmToTest) + ' mm',dataPath, dorsal, binPeak, binArea, pointAlpha, True)
     createFigure('Ventral ' + str(mmToTest) + ' mm',dataPath, ventral, binPeak, binArea, pointAlpha, True)
-
 print('Creating Figures!')
 print('Creating Excel Files')
 wb.save(dataPath + '/Average Patient Data.xlsx')
-print('\n'*2 + 'Saved figures in ' + dataPath + '!')
+print('Saved figures in ' + dataPath + '!')
 #plt.show()
 print('Done!')
