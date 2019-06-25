@@ -37,6 +37,8 @@ dataPath = '/Users/talhakhalil/Desktop/Research/Data'
 print('This is your data path, ' + dataPath)
 
 #mmToTest = int(input('How many mm do you want to test? (0, would mean to test all!)\n'))
+R2tolerance = 0.95
+
 mmToTest = 0
 if mmToTest == 0 :
     print('Going to test: All mm')
@@ -144,7 +146,7 @@ for x in patientArray:
         
 wb = openpyxl.Workbook()
 for x in patientArray:
-    getDataForPatient(x, allResultFiles, dataPath)
+    getDataForPatient(x, allResultFiles, dataPath, R2tolerance)
     storeExcelData(x, wb)
 print('Trajectories have been stored!')
 

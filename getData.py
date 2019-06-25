@@ -19,7 +19,7 @@ def getDataFromIndividualFile(patient, file, dataPath):
         tempFile.appendFreqArea(x[1]*x[2])
     return tempFile
 
-def getDataForPatient(Patient, resultFiles, dataPath):
+def getDataForPatient(Patient, resultFiles, dataPath, tolerance):
     x = 0
     while x < Patient.getTractLen():
         tract = Patient.getAllTrajectory(x)
@@ -29,7 +29,7 @@ def getDataForPatient(Patient, resultFiles, dataPath):
             for individualFile in resultFiles:
                 if tract.getTract()[y].getName() == fileName.search(individualFile)[0]:
                     file = getDataFromIndividualFile(Patient, individualFile, dataPath)
-                    if file.getR2() >= 0.95:
+                    if file.getR2() >= tolerance:
                         tract.getTract()[y].appendResultsFiles(file)
             y += 1
 
