@@ -157,7 +157,6 @@ print('\n'*2 + 'All trajectories have been stored!')
 sheet = wb.create_sheet('Patients Average Data')
 if mmToTest == 0:
     greatestLength = getDataGreatestLength(patientArray, dorsal, ventral)
-    print(greatestLength)
     q = 1
     while q <= greatestLength:
         dorsal = brainSection('Dorsal')
@@ -183,5 +182,5 @@ print('Creating Figures!')
 print('Creating Excel Files')
 wb.save(dataPath + '/Average Patient Data.xlsx')
 print('Saved figures in ' + dataPath + '!')
-#plt.show()
+plt.show()
 print('Done!')

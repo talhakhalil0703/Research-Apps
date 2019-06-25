@@ -47,9 +47,11 @@ def createFigure(name, dataPath, container, binPeak, binArea, palpha, average):
         r2.set_title('R^2')
 
 
-    peak.hist(container.getPeakFreq(), rwidth = .9, bins = binPeak)
+    peak.hist(container.getPeakFreq(), rwidth = .9, bins = binPeak, density = True)
+    peak.axis([binPeak[0], binPeak[-1], 0, 0.06])
     peak.set_title('Peak Frequencies')
-    area.hist(container.getFreqArea(), rwidth = .9, bins = binArea)
+    area.hist(container.getFreqArea(), rwidth = .9, bins = binArea, density = True)
+    area.axis([binArea[0], binArea[-1], 0, 0.65])
     area.set_title('Freqeuncy Area')
     fig.tight_layout()
     plt.savefig(dataPath + '/' + name +'.png', transparent = False, bbox_inches = 'tight')
