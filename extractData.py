@@ -134,7 +134,6 @@ def getDataGreatestLength(patientArray, dorsal, ventral):
     for x in patientArray:
         y = 0
         while y < x.getTractLen():
-
             tractLength = x.getAllTrajectory(y).getTractLen()
             if tractLength % 2 == 1:
                 x.getAllTrajectory(y).removeTract(tractLength - 1)

@@ -18,6 +18,7 @@ def createFigure(name, dataPath, container, binPeak, binArea, palpha, average):
     peak = plt.subplot(246)
     area = plt.subplot(245)
     alpha = plt.subplot(144)
+    alpha.set_ylim(bottom = 0, top = 13)
     scale = 1.1
     jitterAmount = 0.05
     
@@ -29,10 +30,10 @@ def createFigure(name, dataPath, container, binPeak, binArea, palpha, average):
         err.scatter(jitter, container.getAverageError(), alpha = palpha)
         err.axis([-0.3, 0.3, 0, max(container.getAverageError())* scale])
         exp.scatter(jitter, container.getAverageExponents(), alpha = palpha)
-        exp.axis([-0.3, 1.3, 0, max(container.getAverageExponents())* scale])
+        exp.axis([-0.3, 1.3, 0, 3 * scale])
         exp.boxplot(container.getAverageExponents(), showcaps = True, notch = True)
         off.scatter(jitter, container.getAverageOffset(), alpha = palpha)
-        off.axis([-0.3, 1.3, 0, max(container.getAverageOffset())* scale])
+        off.axis([-0.3, 1.3, 0, 8* scale])
         off.boxplot(container.getAverageOffset(), showcaps = True, notch = True)
         r2.scatter(jitter, container.getAverageR2(), alpha = palpha)
         r2.axis([-0.3, 0.3, 0, max(container.getAverageR2())* scale])
