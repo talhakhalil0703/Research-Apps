@@ -33,7 +33,7 @@ class FullTract:
     def getTract (self):
         return self.__Tract
     def removeTract(self, i):
-        del(self.__Tract[i])
+        self.__Tract.remove(i)
     def getTractLen(self):
         return len(self.__Tract)
 

@@ -23,12 +23,24 @@ def getDataForPatient(Patient, resultFiles, dataPath):
     x = 0
     while x < Patient.getTractLen():
         tract = Patient.getAllTrajectory(x)
-        tract = tract.getTract()
-        for mmFile in tract:
+        tractLen = tract.getTractLen()
+        y = 0
+        while y < tractLen: #mmFile in tract
             for individualFile in resultFiles:
-                if mmFile.getName() == fileName.search(individualFile)[0]:
-                    mmFile.appendResultsFiles(getDataFromIndividualFile(Patient, individualFile, dataPath))
-        
+                if tract.getTract()[y].getName() == fileName.search(individualFile)[0]:
+                    file = getDataFromIndividualFile(Patient, individualFile, dataPath)
+                    if file.getR2() >= 0.95:
+                        tract.getTract()[y].appendResultsFiles(file)
+            y += 1
+
+        tractLen = tract.getTractLen()
+        y = 0
+        while y < tractLen:
+            if tract.getTract()[y].getResultsFilesLen() == 0:
+                tract.removeTract(tract.getTract()[y])
+                tractLen -= 1
+            else:    
+                y += 1
         x = x + 1
 
 

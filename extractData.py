@@ -136,7 +136,7 @@ def getDataGreatestLength(patientArray, dorsal, ventral):
         while y < x.getTractLen():
             tractLength = x.getAllTrajectory(y).getTractLen()
             if tractLength % 2 == 1:
-                x.getAllTrajectory(y).removeTract(tractLength - 1)
+                x.getAllTrajectory(y).removeTract(x.getAllTrajectory(y).getTract()[tractLength - 1])
                 tractLength = x.getAllTrajectory(y).getTractLen()
                 #print('Cutout a mm from ventral to make length even for: ' +  str(x.getName()) + 'Tract ' + str(y))
 

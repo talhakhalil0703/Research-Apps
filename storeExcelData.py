@@ -40,7 +40,6 @@ def storeExcelData(Patient, workBook):
 			sheet['B' + str(y + 2)]  = offset[y]
 			sheet['C' + str(y + 2)]  = error[y]
 			sheet['D' + str(y + 2)]  = r2[y]
-			y += 1
 			z = 0
 			length2 = len(peak[y])
 			while z < length2:
@@ -48,7 +47,7 @@ def storeExcelData(Patient, workBook):
 				sheet['F' + str(q + 2)]  = area[y][z]
 				q += 1
 				z += 1
-		y = 0
+			y += 1
 		x += 1
 
 
