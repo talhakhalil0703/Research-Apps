@@ -1,6 +1,8 @@
+import time
 import os
 import re
 import matlab.engine
+before = time.time()
 eng = matlab.engine.start_matlab()
 
 print('Adding Paths....')
@@ -22,7 +24,7 @@ for x in names:
     number = findPatientNumber.search(x)
     if number:
         number = int(number.group(1))
-        if number == 2124 and number != oldNumber: #Making sure to not add the same patient twice, and updating the matlab save file directory, you can add any patient you want to skip over here
+        if number != oldNumber: #Making sure to not add the same patient twice, and updating the matlab save file directory, you can add any patient you want to skip over here
             patients.append(number) #updating the patients we have
             #Going to update the matlab file to change the save location
             file = open('/Users/talhakhalil/Documents/MATLAB/smr_conversion_auto_FOOOF.m', 'r') #Reading the file
@@ -30,7 +32,6 @@ for x in names:
             filePatientNumber = findPatientNumber.search(fileContent) #searching for the patient number, just incase
             filePatientNumber = int(filePatientNumber.group(1)) #converting the string number to type int
             file.close() #Closing the file to reopen so we can write to it now
-           
             newContent= fileContent.replace("/Data/%d" %(filePatientNumber), "/Data/%d" %(number), 5) #replacing the old patient number with the new one, and saving it to a string
 
             file = open('/Users/talhakhalil/Documents/MATLAB/smr_conversion_auto_FOOOF.m', 'w') #Writing to the file
@@ -54,3 +55,6 @@ for x in names:
                     eng.smr_conversion_auto_FOOOF(searchName, 10, 1000, searchPath , searchPath , nargout = 0)
             print('Finished creating figures for patient, ' + str(number))
             oldNumber = number #Making sure to not add the same patient twice
+after = time.time()
+print('Time taken:' + str(after-before))
+

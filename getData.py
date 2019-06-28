@@ -39,7 +39,7 @@ def getDataForPatient(Patient, resultFiles, dataPath, tolerance):
             if tract.getTract()[y].getResultsFilesLen() == 0:
                 tract.removeTract(tract.getTract()[y])
                 tractLen -= 1
-            else:    
+            else:
                 y += 1
         x = x + 1
 
