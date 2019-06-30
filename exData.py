@@ -20,6 +20,7 @@ from extractData import extractDataFromMiddle
 from extractData import getDataGreatestLength
 from storeExcelData import storeExcelData
 from brainSectionClass import brainSection
+from createFigures import createSlopeMM
 
 def exData(stringDataPath, stringR2, PeakArray, AreaArray, stringAlpha):
     before = time.time()
@@ -62,6 +63,7 @@ def exData(stringDataPath, stringR2, PeakArray, AreaArray, stringAlpha):
     binArea = list(numpy.arange(p1,p2,p3))
     pointAlpha = float(stringAlpha)  # This is the tranparency of the points on the scatter plots
 
+    maxMM = 5
     # These are all the lists that will end up holding the data for the use of
     # figure creation, they are not really organized in a good manner. You can
     # get specific data points by using the class Patient
@@ -176,16 +178,19 @@ def exData(stringDataPath, stringR2, PeakArray, AreaArray, stringAlpha):
     # The bin edges and the alpha for the scatter plots can be changed at the top
     # of the file called, binPeak, binArea, and pointAlpha
 
+    slopeMM = [None] * maxMM * 2
     sheet = wb.create_sheet('Patients Average Data')
     if mmToTest == 0:
         greatestLength = getDataGreatestLength(patientArray, dorsal, ventral)
         print('Cutout a mm from ventral to make length even for tracts!')
         print('Creating Figures!')
         q = 1
-        while q <= 5:
+        while q <= maxMM:
             dorsal = brainSection('Dorsal')
             ventral = brainSection('Ventral')
             extractDataFromMiddle(patientArray, dorsal, ventral, q)
+            slopeMM[maxMM -q] = dorsal.getExponents()
+            slopeMM[maxMM - 1 + q] = ventral.getExponents()
             sheet['A' + str(q)] = 'Points in: ' + \
                 str(len(dorsal.getAverageError()))
             sheet['B' + str(q)] = 'Dorsal Slope Average For : ' + str(q) + ' mm'
@@ -211,5 +216,6 @@ def exData(stringDataPath, stringR2, PeakArray, AreaArray, stringAlpha):
     print('Saving Excel Files')
     wb.save(dataPath + '/Patients Data.xlsx')
     print('Saved figures in ' + dataPath + '!')
+    createSlopeMM('SlopesMM', dataPath, slopeMM)
     after = time.time()
     print('Done! Time taken: ' + str(int(after - before)) + ' seconds')

@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"re",
+				"redirector\tfunction"
+			],
+			[
 				"getR",
 				"getResultsFilesLen"
 			],
@@ -52,10 +56,20 @@
 	"buffers":
 	[
 		{
+			"file": "consoleGui.py",
+			"settings":
+			{
+				"buffer_size": 3171,
+				"encoding": "UTF-8",
+				"line_ending": "Unix",
+				"name": "import ScrolledText"
+			}
+		},
+		{
 			"file": "exData.py",
 			"settings":
 			{
-				"buffer_size": 7390,
+				"buffer_size": 8176,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -64,7 +78,7 @@
 			"file": "createFigures.py",
 			"settings":
 			{
-				"buffer_size": 4505,
+				"buffer_size": 4673,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
@@ -180,7 +194,7 @@
 	],
 	"find":
 	{
-		"height": 70.0
+		"height": 30.0
 	},
 	"find_in_files":
 	{
@@ -194,6 +208,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"60",
 			"max"
 		],
 		"highlight": true,
@@ -217,29 +232,30 @@
 			[
 				{
 					"buffer": 0,
-					"file": "exData.py",
+					"file": "consoleGui.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 7390,
+						"buffer_size": 3171,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1606,
-								1607
+								3171,
+								3171
 							]
 						],
 						"settings":
 						{
+							"auto_name": "import ScrolledText",
 							"syntax": "Packages/Python/Python.sublime-syntax",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 620.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -247,19 +263,19 @@
 				},
 				{
 					"buffer": 1,
-					"file": "createFigures.py",
+					"file": "exData.py",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4505,
+						"buffer_size": 8176,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								60,
-								60
+								2059,
+								2059
 							]
 						],
 						"settings":
@@ -273,6 +289,36 @@
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "createFigures.py",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4673,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
 					"type": "text"
 				}
 			]
@@ -359,7 +405,7 @@
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 261.0,
+	"side_bar_width": 50.0,
 	"status_bar_visible": true,
 	"template_settings":
 	{

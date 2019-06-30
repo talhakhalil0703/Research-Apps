@@ -5,6 +5,29 @@ from random import uniform
 def average(list):
     return sum(list) / len(list)
 
+def createSlopeMM(name, dataPath, slopes):
+    mm = []
+    jitterAll = []
+    slopesLen = len(slopes)
+    x = 0
+    jitterAmount = 0.05
+    while x < slopesLen:
+        mm.append(slopes[x])
+        num = 0
+        jitter = []
+        while num < len(slopes[x]):
+            jitter.append(uniform(-jitterAmount, jitterAmount))
+            num += 1
+        jitterAll.append(jitter)
+        x += 1
+    fig = plt.figure()
+    mmFigure = plt.subplot()
+    mmFigure.boxplot(mm, jitterAll)
+    mmFigure.set_title('Slopes vs MM')
+    mmFigure.set_xlabel('MM')
+    mmFigure.set_ylabel('Slopes')
+    plt.savefig(dataPath + '/' + name + '.png',
+                transparent=False, bbox_inches='tight')
 
 def createFigure(name, dataPath, container, binPeak, binArea, palpha, 
                 average):
