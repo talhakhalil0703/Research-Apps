@@ -22,7 +22,7 @@ from storeExcelData import storeExcelData
 from brainSectionClass import brainSection
 from createFigures import createSlopeMM
 
-def exData(stringDataPath, stringR2, PeakArray, AreaArray, stringAlpha):
+def exData(stringDataPath, stringR2, PeakArray, AreaArray, stringAlpha, stringMMToChoose):
     before = time.time()
 
     # Modules needed, scipy, matplotlib, iteration_utilities, you also need the
@@ -63,7 +63,7 @@ def exData(stringDataPath, stringR2, PeakArray, AreaArray, stringAlpha):
     binArea = list(numpy.arange(p1,p2,p3))
     pointAlpha = float(stringAlpha)  # This is the tranparency of the points on the scatter plots
 
-    maxMM = 5
+    maxMM = int(stringMMToChoose)
     # These are all the lists that will end up holding the data for the use of
     # figure creation, they are not really organized in a good manner. You can
     # get specific data points by using the class Patient

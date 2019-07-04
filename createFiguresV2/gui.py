@@ -53,7 +53,7 @@ mmToChooseText.grid(column = 0, row = 5)
 def runClicked():
 	PeakArray = [float(Peak1.get()), float(Peak2.get()), float(Peak3.get())]
 	AreaArray = [float(Area1.get()), float(Area2.get()), float(Area3.get())]
-	exData(dataPath.get(), R2.get(), PeakArray, AreaArray, Alpha.get())
+	exData(dataPath.get(), R2.get(), PeakArray, AreaArray, Alpha.get(), mmToChoose.get())
 
 def exitClicked():
 	sys.exit(0)
@@ -67,8 +67,6 @@ Console.grid(row = 6,columnspan = 4)
 
 def redirector(inputStr):
     Console.insert(INSERT, inputStr)
-
-
 
 sys.stdout.write = redirector
 window.mainloop()
