@@ -44,11 +44,11 @@ alpha_text = Label(window, text = 'Points alpha value: ')
 alpha = Entry(window, width =63)
 alpha.grid(column = 1, row = 4, columnspan = 3)
 alpha.insert(END, '0.2')
-alpha_text.grid(column = 0, row = 5)
+alpha_text.grid(column = 0, row = 4)
 mm_to_choose_text = Label(window, text = 'How many mm do you want? : ')
 mm_to_choose = Entry(window, width =63)
 mm_to_choose.grid(column = 1, row = 5, columnspan = 3)
-mm_to_choose.insert(END, '0.2')
+mm_to_choose.insert(END, '5')
 mm_to_choose_text.grid(column = 0, row = 5)
 
 def run_clicked():

@@ -7,7 +7,7 @@ class MM:
     def __init__(self, name):
         self.name = name
         self.mm_files = []
-        
+
 class SegmentFile:
     def __init__(self, name):
         self.name = name
@@ -19,8 +19,8 @@ class SegmentFile:
         self.freq_area = []
 
 class BrainSection:
-    def __init__(self):
-        self.name = None
+    def __init__(self, name):
+        self.name = name
         self.exponents = []
         self.offset = []
         self.r2 = []

@@ -1,5 +1,6 @@
 import os
 import re
+from iteration_utilities import unique_everseen, duplicates
 
 file_name_result = re.compile(r'(\d\d\d\d-\d\d\d\d)([ABCDEF])?(auto)?(\d)?(\d)?')
 file_name = re.compile(r'(\d\d\d\d-\d\d\d\d)([ABCDEF])?')
@@ -13,15 +14,20 @@ def find_file_directory(data_path):
             if mm_file.endswith('_fooof_results.mat'):
                 file_directory.append(os.path.join(root, mm_file))
 
+    file_directory.sort()
     return file_directory
 
 
 def find_files(data_path, directory, search_for_mm):
     files_array = []
     for x in directory:
-        name = file_name_result.search(x) if search_for_mm else name = file_name.search(x)
+        if search_for_mm:
+            name = file_name_result.search(x)
+        else:
+            name = file_name.search(x)
         if name is not None and name not in files_array:
             files_array.append(name[0])
+        files_array = list(unique_everseen(files_array))
         files_array.sort()
     return files_array
 
@@ -40,13 +46,15 @@ def remove_files(results_list, remove_list):
                 results_list.remove(x)
             except:
                 continue
+    results_list.sort()
+
     return results_list
 
 
 def read_file_names(file_path):
     find_file_names =[]
 
-    with open(file_path, 'r') as file_to_read
+    with open(file_path, 'r') as file_to_read:
         file_content = file_to_read.read()
 
     to_add = file_name_result.findall(file_content)

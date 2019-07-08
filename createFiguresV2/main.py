@@ -1,6 +1,7 @@
 import time
 import numpy
 import openpyxl
+import matlab.engine
 
 from data_structure import BrainSection
 from file_handle import find_file_directory
@@ -9,7 +10,8 @@ from file_handle import remove_files
 from file_handle import read_file_names
 from manage_patient_data import create_patient_array_with_trajectories
 from manage_patient_data import extract_data_for_patient
-
+from excel_file import add_averages_to_excel_file
+from excel_file import store_all_patients_raw_data
 def main (string_data_path, string_r2, peark_array, area_array, string_alpha, string_mm_to_choose):
 
     before = time.time()
@@ -24,16 +26,13 @@ def main (string_data_path, string_r2, peark_array, area_array, string_alpha, st
     point_alpha = float(string_alpha)
     print('Adding MatLab Path...')
     matlabEngine = matlab.engine.start_matlab()
-    matlabEngine.laodPath(nargout = 0)
+    matlabEngine.loadPath(nargout = 0)
     print('This is your data path: ' +  data_path)
-    print('Going to test ' + string(max_mm) + ' away from the middle!')
-
-    dorsal = BrainSection('Dorsal')
-    ventral = BrainSection('Ventral')
+    print('Going to test ' + string_mm_to_choose + ' away from the middle!')
 
     do_not_run_segment = read_file_names(data_path + '/TossData.txt')
     do_not_run_mm = read_file_names(data_path + '/mmToNotRun.txt')
-    trajectories = read_file_names(data_path + 'Trajectories.txt')
+    trajectories = read_file_names(data_path + '/Trajectories.txt')
 
     file_directory = find_file_directory(data_path)
     all_files = find_files(data_path, file_directory, False)
@@ -42,7 +41,13 @@ def main (string_data_path, string_r2, peark_array, area_array, string_alpha, st
 
     patient_array = create_patient_array_with_trajectories(data_path, trajectories,all_files)
 
+    wb = openpyxl.Workbook()
     for patient in patient_array:
         extract_data_for_patient(patient, all_result_files, data_path, r2_tolerance)
 
-    wb = openpyxl.Workbook()
+    add_averages_to_excel_file(patient_array, max_mm, do_not_run_mm, wb, data_path, bin_peak, bin_area, point_alpha)
+    store_all_patients_raw_data(patient_array, wb, do_not_run_mm)
+
+    wb.save(data_path + '/Patients Data V2.xlsx')
+    after = time.time()
+    print('Time Taken: ' + str(after-before))
