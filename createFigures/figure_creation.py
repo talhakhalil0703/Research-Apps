@@ -41,13 +41,13 @@ def create_figure(name, data_path, container, bin_peak, bin_area, palpha):
     freak = plt.subplot(155, xticks = [0,10,20,30,40,50,60])
     alpha.set_ylim(bottom=0, top=13)
     scale = 1.1
-    jitterAmount = 0.05
+    jitter_amount = 0.05
     maxc = 0.070
     minc = 0
     colorc = 'viridis'
     num = 0
     while num < len(container.average_error):
-        jitter.append(uniform(-jitterAmount, jitterAmount))
+        jitter.append(uniform(-jitter_amount, jitter_amount))
         num += 1
     err.scatter(jitter, container.average_error, alpha=palpha)
     err.axis([-0.3, 0.3, 0, max(container.average_error) * scale])
@@ -74,11 +74,11 @@ def create_figure(name, data_path, container, bin_peak, bin_area, palpha):
 
     num = 0
     while num < len(beta_area):
-        beta_jitter.append(uniform(-jitterAmount, jitterAmount))
+        beta_jitter.append(uniform(-jitter_amount, jitter_amount))
         num += 1
     num = 0
     while num < len(alpha_area):
-        alpha_jitter.append(uniform(-jitterAmount, jitterAmount))
+        alpha_jitter.append(uniform(-jitter_amount, jitter_amount))
         num += 1
 
     scatter = []
@@ -99,7 +99,7 @@ def create_figure(name, data_path, container, bin_peak, bin_area, palpha):
     exp.set_title('Slope')
     r2.set_title('R^2')
 
-    peak.hist(container.freq_area, rwidth=.9, bins=bin_peak,
+    peak.hist(container.peak_freq, rwidth=.9, bins=bin_peak,
             density=True)
     peak.axis([bin_peak[0], bin_peak[-1], 0, 0.15])
     peak.set_title('Peak Frequencies')

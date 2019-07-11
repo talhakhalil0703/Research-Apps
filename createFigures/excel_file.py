@@ -36,7 +36,6 @@ def store_all_patients_raw_data(patient_array, work_book, do_not_run_mm):
     for patient in patient_array:
         for index, trajectory in enumerate(patient.trajectory_number):
             sheet_name = str(patient.name) + '_' + str(index)
-            print('Creating sheet: ' + sheet_name)
             sheet = work_book.create_sheet(sheet_name)
             sheet['A1'] = 'Slope'
             sheet['B1'] = 'Offset'
@@ -50,7 +49,6 @@ def store_all_patients_raw_data(patient_array, work_book, do_not_run_mm):
                     mm_exp, mm_offset, mm_r2, mm_error = [], [], [], []
                     for do_not_include in do_not_run_mm:
                         if do_not_include == MM.name:
-                            print('Excluding from Raw', do_not_include)
                             raise Do_NOT()
                     for segment in MM.mm_files:
                         mm_exp.append(segment.exponent)

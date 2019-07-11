@@ -12,13 +12,13 @@ from manage_patient_data import create_patient_array_with_trajectories
 from manage_patient_data import extract_data_for_patient
 from excel_file import add_averages_to_excel_file
 from excel_file import store_all_patients_raw_data
-def main (string_data_path, string_r2, peark_array, area_array, string_alpha, string_mm_to_choose):
+def main (string_data_path, string_r2, peak_array, area_array, string_alpha, string_mm_to_choose):
 
     before = time.time()
 
     data_path =  string_data_path
     r2_tolerance = float(string_r2)
-    p1, p2, p3  = peark_array[0], peark_array[1], peark_array[2]
+    p1, p2, p3  = peak_array[0], peak_array[1], peak_array[2]
     bin_peak = list(numpy.arange(p1,p2,p3))
     p1, p2, p3 = area_array[0], area_array[1], area_array[2]
     bin_area = list(numpy.arange(p1,p2,p3))

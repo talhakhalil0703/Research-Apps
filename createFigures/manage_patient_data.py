@@ -40,7 +40,6 @@ def fill_trajectories_for_patient(single_patient, start_trajectories,end_traject
                 mm_file = MM(all_files[i])
                 trajectory.append(mm_file)
                 i += 1
-            print(len(trajectory))
             single_patient.trajectory_number.append(trajectory)
 
 def create_patient_array_with_trajectories(data_path, trajectories, all_files):
@@ -119,10 +118,8 @@ def extract_mm_from_middle(patient_array, dorsal, ventral, mm_to_extract, do_not
             include_ventral = True
             for do_not_include in do_not_run_mm:
                 if do_not_include == trajectory[ventral_index - mm_to_extract].name:
-                    print('Excluding mm point'+ do_not_include)
                     include_dorsal = False
                 if do_not_include == trajectory[ventral_index - 1 + mm_to_extract].name:
-                    print('Excluding mm point'+ do_not_include)
                     include_ventral = False
 
             if include_dorsal:
