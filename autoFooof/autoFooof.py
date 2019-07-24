@@ -16,8 +16,7 @@ for root, dirs, files in os.walk(dataPath):
     for file in files:
         if file.endswith('.smr'):
             names.append(os.path.join(root, file)) #stored the directory with the name.
-
-patients = []
+patients=[]
 oldNumber = 0;
 findPatientNumber = re.compile(r'/Data/(\d\d\d\d)/')
 for x in names:
@@ -27,17 +26,6 @@ for x in names:
         if number != oldNumber: #Making sure to not add the same patient twice, and updating the matlab save file directory, you can add any patient you want to skip over here
             patients.append(number) #updating the patients we have
             #Going to update the matlab file to change the save location
-            file = open('/Users/talhakhalil/Documents/MATLAB/smr_conversion_auto_FOOOF.m', 'r') #Reading the file
-            fileContent = file.read() #Saving the files content into a string
-            filePatientNumber = findPatientNumber.search(fileContent) #searching for the patient number, just incase
-            filePatientNumber = int(filePatientNumber.group(1)) #converting the string number to type int
-            file.close() #Closing the file to reopen so we can write to it now
-            newContent= fileContent.replace("/Data/%d" %(filePatientNumber), "/Data/%d" %(number), 5) #replacing the old patient number with the new one, and saving it to a string
-
-            file = open('/Users/talhakhalil/Documents/MATLAB/smr_conversion_auto_FOOOF.m', 'w') #Writing to the file
-            file.write(newContent)
-            file.close() # Closing the file as to not mess it up by accident.
-
             searchPath = dataPath + '/%d' %(number) + '/' #This now points to the patients folder which contains the smr files
             fileName = re.compile(r'%s(\d\d\d\d-\d\d\d\d)([ABCDEFabcdef])?' %(searchPath));
             for y in names:

@@ -14,7 +14,12 @@ def get_average(list):
     except:
         print('Divide by Zero')
         return 0
-
+def get_sum(list):
+    try:
+        return sum(list)
+    except:
+        print('Nothing in List')
+        return 0
 
 def find_start_end_trajectories(data_path, trajectories):
     start_trajectories = []
@@ -97,6 +102,8 @@ def append_brain_section_for_mm(mm_file, brain_section):
         for index, freq in enumerate(segment.peak_freq):
             brain_section.peak_freq.append(freq)
             brain_section.freq_area.append(segment.freq_area[index])
+            if freq >= 13 and freq <= 35:
+                brain_section.beta_freq_area.append(segment.freq_area[index])
 
     brain_section.average_exponents.append(get_average(temp_exponent))
     brain_section.average_offset.append(get_average(temp_offset))

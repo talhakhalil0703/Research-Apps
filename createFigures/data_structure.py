@@ -31,3 +31,4 @@ class BrainSection:
         self.average_error = []
         self.peak_freq = []
         self.freq_area = []
+        self.beta_freq_area = []
