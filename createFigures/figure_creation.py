@@ -20,10 +20,10 @@ def create_slope_mm(name, data_path, slopes):
     fig = plt.figure()
     mm_figure = plt.subplot()
     mm_figure.boxplot(mm, jitter_all)
-    mm_figure.set_title('Slopes vs MM')
+    mm_figure.set_title(name + ' vs MM')
     mm_figure.set_xlabel('MM')
-    mm_figure.set_ylabel('Slopes')
-    plt.savefig(data_path + '/' + name + 'V2.png', bbox_inches = 'tight')
+    mm_figure.set_ylabel(name)
+    plt.savefig(data_path + '/' + name + '.png', bbox_inches = 'tight')
 
 def create_figure(name, data_path, container, bin_peak, bin_area, palpha):
     jitter = []
@@ -121,6 +121,5 @@ def create_figure(name, data_path, container, bin_peak, bin_area, palpha):
                 bins = [bin_peak, bin_area], density  = True, vmax = maxc,
                 vmin = minc, cmap = colorc)
     fig.tight_layout()
-    plt.savefig(data_path + '/' + name + 'V2.png',
+    plt.savefig(data_path + '/' + name + '.png',
                 transparent=False, bbox_inches='tight')
-

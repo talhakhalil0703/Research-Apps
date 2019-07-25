@@ -7,18 +7,40 @@ from figure_creation import create_figure
 from figure_creation import create_slope_mm
 
 def add_averages_to_excel_file(patient_array, max_mm, do_not_run_mm, work_book, data_path, bin_peak, bin_area, palpha):
+
     slopes_per_mm = [None] * max_mm * 2
     beta_freq_area_per_mm = [None] * max_mm * 2
+    delta_freq_area_per_mm = [None] * max_mm * 2
+    theta_freq_area_per_mm = [None] * max_mm * 2
+    alpha_freq_area_per_mm = [None] * max_mm * 2
+    low_beta_freq_area_per_mm = [None] * max_mm * 2
+    high_beta_freq_area_per_mm = [None] * max_mm * 2
+    gamma_freq_area_per_mm = [None] * max_mm * 2
+
     sheet = work_book.create_sheet('Patients Average Data')
     x = 1
     while x <= max_mm:
         dorsal = BrainSection('Dorsal')
         ventral = BrainSection('Ventral')
         extract_mm_from_middle(patient_array, dorsal, ventral, x, do_not_run_mm)
+
         slopes_per_mm[max_mm - x] = dorsal.exponents.copy()
-        beta_freq_area_per_mm[max_mm - x] = dorsal.beta_freq_area.copy()
         slopes_per_mm[max_mm + x - 1] = ventral.exponents.copy()
+        beta_freq_area_per_mm[max_mm - x] = dorsal.beta_freq_area.copy()
         beta_freq_area_per_mm[max_mm - 1 + x] = ventral.beta_freq_area.copy()
+        delta_freq_area_per_mm[max_mm - x] = dorsal.delta_freq_area.copy()
+        delta_freq_area_per_mm[max_mm - 1 + x] = ventral.delta_freq_area.copy()
+        theta_freq_area_per_mm[max_mm - x] = dorsal.theta_freq_area.copy()
+        theta_freq_area_per_mm[max_mm - 1 + x] = ventral.theta_freq_area.copy()
+        alpha_freq_area_per_mm[max_mm - x] = dorsal.alpha_freq_area.copy()
+        alpha_freq_area_per_mm[max_mm - 1 + x] = ventral.alpha_freq_area.copy()
+        low_beta_freq_area_per_mm[max_mm - x] = dorsal.low_beta_freq_area.copy()
+        low_beta_freq_area_per_mm[max_mm - 1 + x] = ventral.low_beta_freq_area.copy()
+        high_beta_freq_area_per_mm[max_mm - x] = dorsal.high_beta_freq_area.copy()
+        high_beta_freq_area_per_mm[max_mm - 1 + x] = ventral.high_beta_freq_area.copy()
+        gamma_freq_area_per_mm[max_mm - x] = dorsal.gamma_freq_area.copy()
+        gamma_freq_area_per_mm[max_mm - 1 + x] = ventral.gamma_freq_area.copy()
+
         sheet['A' + str(x)] = 'Points in: ' + str(x) + ' mm: ' + str(len(dorsal.average_error))
         sheet['B' + str(x)] = 'Dorsal Slope Average For : ' + str(x) + ' mm'
         sheet['C' + str(x)] = get_average(dorsal.average_exponents)
@@ -32,8 +54,16 @@ def add_averages_to_excel_file(patient_array, max_mm, do_not_run_mm, work_book, 
         create_figure('Dorsal ' + str(x) + 'mm', data_path, dorsal, bin_peak, bin_area, palpha)
         create_figure('Ventral ' + str(x) + 'mm', data_path, ventral, bin_peak, bin_area, palpha)
         x += 1
-    create_slope_mm('Slopes VS MM', data_path, slopes_per_mm)
-    create_slope_mm('Beta Freq Area VS MM', data_path, beta_freq_area_per_mm)
+
+    create_slope_mm('Slopes', data_path, slopes_per_mm)
+    create_slope_mm('Beta Freq Area', data_path, beta_freq_area_per_mm)
+    create_slope_mm('Delta Freq Area', data_path, delta_freq_area_per_mm)
+    create_slope_mm('Theta Freq Area', data_path, theta_freq_area_per_mm)
+    create_slope_mm('Alpha Freq Area', data_path, alpha_freq_area_per_mm)
+    create_slope_mm('Low Beta Freq Area', data_path, low_beta_freq_area_per_mm)
+    create_slope_mm('High Beta Freq Area', data_path, high_beta_freq_area_per_mm)
+    create_slope_mm('Gamma Freq Area', data_path, gamma_freq_area_per_mm)
+
 class Do_NOT(Exception):
     pass
 

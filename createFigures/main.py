@@ -48,6 +48,6 @@ def main (string_data_path, string_r2, peak_array, area_array, string_alpha, str
     add_averages_to_excel_file(patient_array, max_mm, do_not_run_mm, wb, data_path, bin_peak, bin_area, point_alpha)
     store_all_patients_raw_data(patient_array, wb, do_not_run_mm)
 
-    wb.save(data_path + '/Patients Data V2.xlsx')
+    wb.save(data_path + '/Patients Data.xlsx')
     after = time.time()
     print('Time Taken: ' + str(after-before))

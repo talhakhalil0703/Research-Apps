@@ -10,7 +10,7 @@ window.title('Note Creator')
 
 notes_content = ''
 notes_path = 'notes.txt'
-content_to_write = 'zxczxc'
+content_to_write = ''
 
 old_time_name = ''
 patient_number = ''

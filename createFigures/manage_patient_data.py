@@ -102,9 +102,22 @@ def append_brain_section_for_mm(mm_file, brain_section):
         for index, freq in enumerate(segment.peak_freq):
             brain_section.peak_freq.append(freq)
             brain_section.freq_area.append(segment.freq_area[index])
-            if freq >= 13 and freq <= 35:
-                brain_section.beta_freq_area.append(segment.freq_area[index])
 
+            if freq <= 4:
+                brain_section.delta_freq_area.append(segment.freq_area[index])
+            elif freq > 4 and freq <= 8:
+                brain_section.theta_freq_area.append(segment.freq_area[index])
+            elif freq > 8 and freq <= 13:
+                brain_section.alpha_freq_area.append(segment.freq_area[index])
+            elif freq > 13 and freq <= 20:
+                brain_section.low_beta_freq_area.append(segment.freq_area[index])
+            elif freq > 20 and freq <= 35:
+                brain_section.high_beta_freq_area.append(segment.freq_area[index])
+            elif freq > 35:
+                brain_section.gamma_freq_area.append(segment.freq_area[index])
+
+            if freq > 13 and freq <= 35:
+                brain_section.beta_freq_area.append(segment.freq_area[index])
     brain_section.average_exponents.append(get_average(temp_exponent))
     brain_section.average_offset.append(get_average(temp_offset))
     brain_section.average_r2.append(get_average(temp_r2))
