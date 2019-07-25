@@ -6,6 +6,16 @@ from manage_patient_data import get_sum
 from figure_creation import create_figure
 from figure_creation import create_slope_mm
 
+def append_data(original, data_to_append, data_to_append_2):
+    len_of_original = len(original)
+    temp = [None] * (len_of_original + 2)
+    for index, x in enumerate(original):
+        temp[index + 1] = x.copy()
+    temp[0] = data_to_append
+    temp[-1] = data_to_append_2
+
+    return temp
+
 def add_averages_to_excel_file(patient_array, max_mm, do_not_run_mm, work_book, data_path, bin_peak, bin_area, palpha):
 
     slopes_per_mm = [None] * max_mm * 2
@@ -22,7 +32,9 @@ def add_averages_to_excel_file(patient_array, max_mm, do_not_run_mm, work_book, 
     while x <= max_mm:
         dorsal = BrainSection('Dorsal')
         ventral = BrainSection('Ventral')
-        extract_mm_from_middle(patient_array, dorsal, ventral, x, do_not_run_mm)
+        dorsal_extreme = BrainSection('Dorsal Extreme')
+        ventral_extreme = BrainSection('Ventral Extreme')
+        extract_mm_from_middle(patient_array, dorsal, ventral, x, do_not_run_mm, dorsal_extreme, ventral_extreme)
 
         slopes_per_mm[max_mm - x] = dorsal.exponents.copy()
         slopes_per_mm[max_mm + x - 1] = ventral.exponents.copy()
@@ -54,6 +66,15 @@ def add_averages_to_excel_file(patient_array, max_mm, do_not_run_mm, work_book, 
         create_figure('Dorsal ' + str(x) + 'mm', data_path, dorsal, bin_peak, bin_area, palpha)
         create_figure('Ventral ' + str(x) + 'mm', data_path, ventral, bin_peak, bin_area, palpha)
         x += 1
+
+    slopes_per_mm = append_data(slopes_per_mm, dorsal_extreme.exponents, ventral_extreme.exponents)
+    beta_freq_area_per_mm = append_data(beta_freq_area_per_mm, dorsal_extreme.beta_freq_area, ventral_extreme.beta_freq_area)
+    delta_freq_area_per_mm = append_data(delta_freq_area_per_mm, dorsal_extreme.delta_freq_area, ventral_extreme.delta_freq_area)
+    theta_freq_area_per_mm = append_data(theta_freq_area_per_mm, dorsal_extreme.theta_freq_area, ventral_extreme.theta_freq_area)
+    alpha_freq_area_per_mm = append_data(alpha_freq_area_per_mm, dorsal_extreme.alpha_freq_area, ventral_extreme.alpha_freq_area)
+    low_beta_freq_area_per_mm = append_data(low_beta_freq_area_per_mm, dorsal_extreme.low_beta_freq_area, ventral_extreme.low_beta_freq_area)
+    high_beta_freq_area_per_mm = append_data(high_beta_freq_area_per_mm, dorsal_extreme.high_beta_freq_area, ventral_extreme.high_beta_freq_area)
+    gamma_freq_area_per_mm = append_data(gamma_freq_area_per_mm, dorsal_extreme.gamma_freq_area, ventral_extreme.gamma_freq_area)
 
     create_slope_mm('Slopes', data_path, slopes_per_mm)
     create_slope_mm('Beta Freq Area', data_path, beta_freq_area_per_mm)

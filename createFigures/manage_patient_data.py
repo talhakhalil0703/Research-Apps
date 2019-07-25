@@ -113,7 +113,7 @@ def append_brain_section_for_mm(mm_file, brain_section):
                 brain_section.low_beta_freq_area.append(segment.freq_area[index])
             elif freq > 20 and freq <= 35:
                 brain_section.high_beta_freq_area.append(segment.freq_area[index])
-            elif freq > 35:
+            elif freq > 35 and freq <= 50:
                 brain_section.gamma_freq_area.append(segment.freq_area[index])
 
             if freq > 13 and freq <= 35:
@@ -123,7 +123,7 @@ def append_brain_section_for_mm(mm_file, brain_section):
     brain_section.average_r2.append(get_average(temp_r2))
     brain_section.average_error.append(get_average(temp_error))
 
-def extract_mm_from_middle(patient_array, dorsal, ventral, mm_to_extract, do_not_run_mm):
+def extract_mm_from_middle(patient_array, dorsal, ventral, mm_to_extract, do_not_run_mm, dorsal_extreme, ventral_extreme):
     for patient in patient_array:
         for trajectory in patient.trajectory_number:
             if len(trajectory) % 2 == 1:
@@ -131,9 +131,12 @@ def extract_mm_from_middle(patient_array, dorsal, ventral, mm_to_extract, do_not
             else:
                 trajectory_length = len(trajectory)
             ventral_index = trajectory_length // 2
+            if mm_to_extract == ventral_index:
+                append_brain_section_for_mm(trajectory[ventral_index - mm_to_extract], dorsal_extreme)
+                append_brain_section_for_mm(trajectory[ventral_index - 1 + mm_to_extract], ventral_extreme)
+                continue
             if mm_to_extract > ventral_index:
-                return
-
+                continue
             include_dorsal = True
             include_ventral = True
             for do_not_include in do_not_run_mm:
