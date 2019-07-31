@@ -1,15 +1,16 @@
 class Patient:
     def __init__(self, name):
         self.name = name
-        self.trajectory_number = []
+        self.mm_files = []
+        self.mm_files_names = []
 
 class MM:
     def __init__(self, name):
         self.name = name
-        self.mm_files = []
+        self.segments = []
 
 class SegmentFile:
-    def __init__(self, name):
+    def __init__(self,name):
         self.name = name
         self.exponent = None
         self.offset = None
@@ -21,10 +22,6 @@ class SegmentFile:
 class BrainSection:
     def __init__(self, name):
         self.name = name
-        self.exponents = []
-        self.offset = []
-        self.r2 = []
-        self.error = []
         self.average_exponents = []
         self.average_offset = []
         self.average_r2 = []

@@ -45,16 +45,11 @@ alpha = Entry(window, width =63)
 alpha.grid(column = 1, row = 4, columnspan = 3)
 alpha.insert(END, '0.2')
 alpha_text.grid(column = 0, row = 4)
-mm_to_choose_text = Label(window, text = 'How many mm do you want? : ')
-mm_to_choose = Entry(window, width =63)
-mm_to_choose.grid(column = 1, row = 5, columnspan = 3)
-mm_to_choose.insert(END, '4')
-mm_to_choose_text.grid(column = 0, row = 5)
 
 def run_clicked():
 	peak_Array = [float(peak_1.get()), float(peak_2.get()), float(peak_3.get())]
 	area_Array = [float(area_1.get()), float(area_2.get()), float(area_3.get())]
-	main(data_path.get(), r2.get(), peak_Array, area_Array, alpha.get(), mm_to_choose.get())
+	main(data_path.get(), r2.get(), peak_Array, area_Array, alpha.get())
 
 def exit_clicked():
 	sys.exit(0)
@@ -63,11 +58,5 @@ run_button = Button(window, text = 'Run', command = run_clicked)
 run_button.grid(row = 7, column = 1)
 exit_button = Button(window, text = 'Exit', command = exit_clicked)
 exit_button.grid(row = 7, column = 2)
-Console = scrolledtext.ScrolledText(window, height=10)
-Console.grid(row = 6,columnspan = 4)
 
-def redirector(inputStr):
-    Console.insert(INSERT, inputStr)
-
-sys.stdout.write = redirector
 window.mainloop()

@@ -1,6 +1,5 @@
 import matplotlib.pyplot as plt
 from random import uniform
-from manage_patient_data import get_average
 
 def create_slope_mm(name, data_path, slopes):
     mm = []
