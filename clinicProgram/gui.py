@@ -1,3 +1,4 @@
+#Clinic Program for FootHills Talha Khalil
 import tkinter as tk
 from tkinter import *
 from tkinter import filedialog
@@ -13,7 +14,6 @@ window.title('Slice Excel Files Into Individual Paitents')
 data_path = Entry(window, width = 45)
 data_path.grid(row = 0, column = 0)
 data_path.insert(END, '')
-
 
 def slice_excel():
     data_path_string = data_path.get()
