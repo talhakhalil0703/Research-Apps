@@ -147,3 +147,18 @@ def remove_empty_data_from_brain_section(brain_section):
         brain_section.average_r2.pop(index_of_data)
         brain_section.average_error.pop(index_of_data)
         i += 1
+
+def add_brain_section_averages(brain_sections_array, work_book):
+    sheet = work_book.create_sheet('Averages')
+    sheet['A1'] = 'Name'
+    sheet['B1'] = 'Slope'
+    sheet['C1'] = 'Offset'
+    sheet['D1'] = 'Error'
+    sheet['E1'] = 'R2'
+    for section_index, section in enumerate(brain_sections_array):
+        sheet['A' + str(section_index + 2)] = section.name
+        sheet['B' + str(section_index + 2)] = get_average(section.average_exponents)
+        sheet['C' + str(section_index + 2)] = get_average(section.average_offset)
+        sheet['D' + str(section_index + 2)] = get_average(section.average_error)
+        sheet['E' + str(section_index + 2)] = get_average(section.average_r2)
+    return

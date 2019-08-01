@@ -58,6 +58,10 @@ console.grid(column = 0, columnspan = 6, row = 3)
 
 time_regex = re.compile(r'(\d\d)(:)(\d\d)(:)(\d\d)')
 
+def save_edits():
+    with open(notes_path,'a') as notes_to_write:
+        notes_to_write.write(console.get(1.0, END))
+
 def read_notes_file():
     with open(notes_path, 'r') as notes_to_read:
         console.delete('1.0' , END)
@@ -132,17 +136,23 @@ def remove_last_clicked():
 def read_button_clicked():
     read_notes_file()
 
+def save_edits_clicked():
+    save_edits()
+    read_notes_file()
+
 exit_button = Button(window, text = 'Exit', command = exit_clicked)
 write_button = Button(window, text = 'Write', command = write_clicked)
 remove_last_button = Button(window, text = 'Remove Last', command = remove_last_clicked)
 next_trajectory = Button(window, text = 'Next Trajectory', command = next_trajectory_clicked)
 read_button = Button(window, text = 'Print File', command = read_button_clicked)
 comment_button = Button(window, text= 'Just Comment', command = comment_button_clicked)
+save_edits_button = Button(window, text = 'Save Manual Edit', command =  save_edits_clicked)
 exit_button.grid(column = 0, row = 2)
 comment_button.grid(column = 1, row = 2)
 write_button.grid(column = 2, row = 2)
 remove_last_button.grid(column = 3, row = 2)
 next_trajectory.grid(column = 4, row = 2)
 read_button.grid(column = 5, row = 2)
+save_edits_button.grid(column = 5, row = 4)
 
 window.mainloop()
