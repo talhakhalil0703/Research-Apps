@@ -61,7 +61,7 @@ def exit_clicked():
 
 run_button = Button(window, text = 'Run', command = run_clicked)
 run_button.grid(row = 7, column = 1)
-exit_button = Button(window, text = 'Exit', command = exit_clicked)
+exit_button = Button(window, text = 'Exit', fg = 'red', command = exit_clicked)
 exit_button.grid(row = 7, column = 2)
 Console = scrolledtext.ScrolledText(window, height=10)
 Console.grid(row = 6,columnspan = 4)
