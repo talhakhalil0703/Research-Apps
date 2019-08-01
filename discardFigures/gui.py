@@ -94,6 +94,7 @@ def clear_file():
 
 def find_files_clicked():
     find_files_in_directory(data_path.get())
+    update_image_shown()
 def exit_clicked():
     sys.exit(0)
 def update_index_value_clicked():
@@ -151,7 +152,7 @@ console.grid(row = 1, columnspan = 2, column = 2)
 global_image.grid(row = 1, column = 0, columnspan = 2)
 
 find_files_button = Button(window, text = 'FIND FILES', command = find_files_clicked)
-exit_button = Button(window, text = 'EXIT', command = exit_clicked)
+exit_button = Button(window, text = 'EXIT', fg = 'red', command = exit_clicked)
 update_index_value = Button(window, text = 'UPDATED INDEX', command = update_index_value_clicked)
 undo_button = Button(window, text = 'UNDO', command = undo_clicked)
 
