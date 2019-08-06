@@ -1,4 +1,4 @@
-# ResearchCode
+# Research Apps
 Code for research that I use to automate my workflow.
 
 ClinicProgram: Is a program being used by the clinic at Foothills Hospital which takes their dataset and splices it into individual patients. It's mean't to have the simplest UI it can an still be very functional.
