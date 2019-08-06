@@ -14,6 +14,7 @@ from manage_patient_other_data import find_patient_number
 from manage_patient_other_data import find_segments_for_patient
 from manage_patient_other_data import remove_empty_data_from_brain_section
 from manage_patient_other_data import add_brain_section_averages
+from manage_patient_other_data import add_averages_to_patient_data
 from figure_creation import create_figure
 
 def main(string_data_path, string_r2, peak_array, area_array, string_alpha):
@@ -61,6 +62,9 @@ def main(string_data_path, string_r2, peak_array, area_array, string_alpha):
     work_book = openpyxl.Workbook()
     fill_raw_excel(work_book, patients)
     add_brain_section_averages([brain_section_left_dorsal,brain_section_right_dorsal,brain_section_left_ventral, brain_section_right_ventral ], work_book)
+    brain_section_names_array = [left_dorsal, right_dorsal, left_ventral, right_ventral]
+    brain_section_values_array = [brain_section_left_dorsal,brain_section_right_dorsal,brain_section_left_ventral, brain_section_right_ventral]
+    add_averages_to_patient_data(brain_section_names_array, brain_section_values_array,work_book, patients)
     work_book.save(data_path + '/Patients Data.xlsx')
 
     after = time.time()

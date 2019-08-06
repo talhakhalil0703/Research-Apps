@@ -5,7 +5,7 @@ from main import main
 import sys
 
 window = tk.Tk()
-window.title('Data Extracter')
+window.title('Excel and Figure Creator For 7000')
 
 data_path_text = Label(window, text = 'Data Path: ')
 data_path_text.grid(column = 0, row = 0)

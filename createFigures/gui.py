@@ -5,7 +5,7 @@ from main import main
 import sys
 
 window = tk.Tk()
-window.title('Data Extracter')
+window.title('Excel and Figure Creator')
 
 data_path_text = Label(window, text = 'Data Path: ')
 data_path_text.grid(column = 0, row = 0)
@@ -55,7 +55,6 @@ def run_clicked():
 	peak_Array = [float(peak_1.get()), float(peak_2.get()), float(peak_3.get())]
 	area_Array = [float(area_1.get()), float(area_2.get()), float(area_3.get())]
 	main(data_path.get(), r2.get(), peak_Array, area_Array, alpha.get(), mm_to_choose.get())
-
 def exit_clicked():
 	sys.exit(0)
 

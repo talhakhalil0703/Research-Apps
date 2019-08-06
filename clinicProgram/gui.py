@@ -48,6 +48,11 @@ def slice_excel():
     for patient in grouped.groups:
         new_group = grouped.get_group(patient).T
         new_group.to_excel(writer, sheet_name= str(patient), header = False)
+        current_sheet = writer.sheets[str(patient)]
+        current_sheet.column_dimensions['A'].width = 17
+        current_sheet.column_dimensions['B'].width = 18
+        current_sheet.column_dimensions['C'].width = 33
+        current_sheet.column_dimensions['D'].width = 31
 
     #Saving
     print('Done')

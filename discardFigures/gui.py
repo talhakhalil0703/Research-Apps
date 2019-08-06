@@ -9,7 +9,7 @@ import re
 fooof_file_regex = re.compile(r'(\d\d\d\d-\d\d\d\d)([ABCDEF])?(auto)(\d)(\d)?')
 
 window = tk.Tk()
-window.title('Discard Figures')
+window.title('Data Analysis Tinder')
 image_size = 600
 notes_path = 'discard.txt'
 file_name_ending_with = '_segment_spectrum.png'
