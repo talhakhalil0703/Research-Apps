@@ -4,10 +4,12 @@ from tkinter import *
 from tkinter import filedialog
 import sys
 import os
+import glob
 from openpyxl import load_workbook
 import openpyxl
 import pyexcel as p
 import pandas as pd
+from pyexcel.cookbook import merge_all_to_a_book
 
 window = tk.Tk()
 window.title('Slice Excel Files Into Individual Paitents')
@@ -18,23 +20,23 @@ data_path.insert(END, '')
 def slice_excel():
     data_path_string = data_path.get()
 
-    if data_path_string[-4:] != '.xls' and data_path_string[-5:] != '.xlsx': #Checking to see if its an excel file
+    if data_path_string[-4:] != '.xls' and data_path_string[-5:] != '.xlsx' and data_path_string[-4:] != '.csv': #Checking to see if its an excel file
         print('Wrong file type!')
         return
 
     if data_path_string[-4:] == '.xls': #If its the xls format convert to xlsx format as that is newer and works better
         p.save_book_as(file_name= data_path_string, dest_file_name= data_path_string[:-4] + '.xlsx')
         data_path_string = data_path_string[:-4] + '.xlsx'
+        df = pd.read_excel(data_path_string)
+        xls_index = data_path_string.index('.xls')
+    elif data_path_string[-4:] == '.csv':
+        merge_all_to_a_book(glob.glob(data_path_string), "output.xlsx")
+        df = pd.read_excel('output.xlsx')
+        xls_index = data_path_string.index('.csv')
+    else:
+        df = pd.read_excel(data_path_string)
 
-    df = pd.read_excel(data_path_string)
-    #At the point you could check what type of dataset you're reading, however I only have one right now so don't need to check for it
-    df.columns = ['Patient', 'Event Name', 'Date and Time', 'Subtotal score A', 'Subtotal score B','Subtotal score C', 'Total Score']
-    #Changed the names of the headers as they are originally mismatched
-    df = df.drop([0], axis = 0) #removing the actual header that is put in the wrong row
-
-    #Creating a name for the result file by modifing the original name slightly
-    xls_index = data_path_string.index('.xls')
-    path = data_path_string[:xls_index] + ' Individual' + data_path_string[xls_index:]
+    path = data_path_string[:xls_index] + ' Individual' + '.xlsx'
 
     #Opening the workbook
     wb = openpyxl.Workbook()
@@ -42,25 +44,35 @@ def slice_excel():
     book = load_workbook(path)
     writer = pd.ExcelWriter(path, engine = 'openpyxl')
     writer.book = book
-    grouped = df.groupby('Patient')
+    grouped = df.groupby('regis_phn')
 
     #Splicing the data into patients and transposing it so its easier to read
     for patient in grouped.groups:
         new_group = grouped.get_group(patient).T
         new_group.to_excel(writer, sheet_name= str(patient), header = False)
         current_sheet = writer.sheets[str(patient)]
-        current_sheet.column_dimensions['A'].width = 17
+        current_sheet.column_dimensions['A'].width = 21
         current_sheet.column_dimensions['B'].width = 18
-        current_sheet.column_dimensions['C'].width = 33
-        current_sheet.column_dimensions['D'].width = 31
+        current_sheet.column_dimensions['C'].width = 18
+        current_sheet.column_dimensions['D'].width = 18
+        current_sheet.column_dimensions['E'].width = 18
+        current_sheet.column_dimensions['F'].width = 18
+        current_sheet.column_dimensions['G'].width = 18
+        current_sheet.column_dimensions['H'].width = 18
+        current_sheet.column_dimensions['I'].width = 18
+        current_sheet.column_dimensions['J'].width = 18
+        current_sheet.column_dimensions['K'].width = 18
+        current_sheet.column_dimensions['L'].width = 18
+        current_sheet.column_dimensions['M'].width = 18
 
-    #Saving
+
+    #Saving and removing empty sheet
     print('Done')
     writer.save()
     writer.close()
 
 def browse_clicked():
-    window.filename = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("all files","*.*"), ("Excel spreadsheets","*.xls"),("Excel spreadsheets MAC","*.xlsx")))
+    window.filename = filedialog.askopenfilename(initialdir = "/",title = "Select file",filetypes = (("CSV files","*.csv"), ("all files","*.*"), ("Excel spreadsheets","*.xls"),("Excel spreadsheets MAC","*.xlsx")))
     data_path.delete(0, END)
     data_path.insert(END, window.filename)
 def exit_clicked():
