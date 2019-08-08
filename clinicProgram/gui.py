@@ -5,16 +5,16 @@ from tkinter import filedialog
 import sys
 import os
 import glob
+import csv
 from openpyxl import load_workbook
 import openpyxl
-import pyexcel as p
 import pandas as pd
 from pyexcel.cookbook import merge_all_to_a_book
 
 window = tk.Tk()
 window.title('Slice Excel Files Into Individual Paitents')
 data_path = Entry(window, width = 45)
-data_path.grid(row = 0, column = 0)
+data_path.grid(row = 0, column = 0, columnspan = 2)
 data_path.insert(END, '')
 
 def slice_excel():
@@ -23,15 +23,15 @@ def slice_excel():
     if data_path_string[-4:] != '.xls' and data_path_string[-5:] != '.xlsx' and data_path_string[-4:] != '.csv': #Checking to see if its an excel file
         print('Wrong file type!')
         return
-
-    if data_path_string[-4:] == '.xls': #If its the xls format convert to xlsx format as that is newer and works better
-        p.save_book_as(file_name= data_path_string, dest_file_name= data_path_string[:-4] + '.xlsx')
-        data_path_string = data_path_string[:-4] + '.xlsx'
-        df = pd.read_excel(data_path_string)
-        xls_index = data_path_string.index('.xls')
-    elif data_path_string[-4:] == '.csv':
-        merge_all_to_a_book(glob.glob(data_path_string), "output.xlsx")
-        df = pd.read_excel('output.xlsx')
+    if data_path_string[-4:] == '.csv':
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        with open(data_path_string, 'r') as f:
+            for row in csv.reader(f):
+                ws.append(row)
+        wb.save('dontmodify.xlsx')
+        #merge_all_to_a_book(glob.glob(data_path_string), "dontmodify.xlsx")
+        df = pd.read_excel('dontmodify.xlsx')
         xls_index = data_path_string.index('.csv')
     else:
         df = pd.read_excel(data_path_string)
@@ -52,19 +52,9 @@ def slice_excel():
         new_group.to_excel(writer, sheet_name= str(patient), header = False)
         current_sheet = writer.sheets[str(patient)]
         current_sheet.column_dimensions['A'].width = 21
-        current_sheet.column_dimensions['B'].width = 18
-        current_sheet.column_dimensions['C'].width = 18
-        current_sheet.column_dimensions['D'].width = 18
-        current_sheet.column_dimensions['E'].width = 18
-        current_sheet.column_dimensions['F'].width = 18
-        current_sheet.column_dimensions['G'].width = 18
-        current_sheet.column_dimensions['H'].width = 18
-        current_sheet.column_dimensions['I'].width = 18
-        current_sheet.column_dimensions['J'].width = 18
-        current_sheet.column_dimensions['K'].width = 18
-        current_sheet.column_dimensions['L'].width = 18
-        current_sheet.column_dimensions['M'].width = 18
-
+        
+        for letter in ['B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M']:
+            current_sheet.column_dimensions[letter].width = 18
 
     #Saving and removing empty sheet
     print('Done')
@@ -81,10 +71,8 @@ def run_clicked():
     slice_excel()
 
 browse_button = Button(window, text = 'BROWSE', command = browse_clicked)
-exit_button = Button(window, text = 'EXIT', command = exit_clicked)
 run_button = Button(window, text = 'RUN', command = run_clicked)
 
-exit_button.grid(row = 1, column = 0)
-browse_button.grid(row = 0, column = 1)
+browse_button.grid(row = 1, column = 0)
 run_button.grid(row = 1, column = 1)
 window.mainloop()

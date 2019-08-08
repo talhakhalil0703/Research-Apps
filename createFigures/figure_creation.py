@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import seaborn as sns
 from random import uniform
 from manage_patient_data import get_average
 

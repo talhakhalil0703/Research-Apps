@@ -16,6 +16,7 @@ def get_average(list):
         return sum(list) / len(list)
     except:
         #print('Divide by 0') #Super annoying as it prints a lot
+        #This exception is here to stop the program from crashing if the list is empty
         return 0
 def get_sum(list):
     try:
@@ -80,6 +81,10 @@ def fill_raw_excel(work_book, patients):
         sheet['L1'] = 'Gamma Area'
         sheet['M1'] = 'Peak'
         sheet['N1'] = 'Area'
+        sheet.column_dimensions['A'].width = 11
+        sheet.column_dimensions['J'].width = 12
+        sheet.column_dimensions['K'].width = 12
+        sheet.column_dimensions['L'].width = 10
         index = 2
         freq_index = 2
         for patient_mm_file in patient.mm_files:
@@ -200,6 +205,7 @@ def add_brain_section_averages(brain_sections_array, work_book):
     sheet['C1'] = 'Offset'
     sheet['D1'] = 'Error'
     sheet['E1'] = 'R2'
+    sheet.column_dimensions['A'].width = 12
     for section_index, section in enumerate(brain_sections_array):
         sheet['A' + str(section_index + 2)] = section.name
         sheet['B' + str(section_index + 2)] = get_average(section.average_exponents)
@@ -208,9 +214,8 @@ def add_brain_section_averages(brain_sections_array, work_book):
         sheet['E' + str(section_index + 2)] = get_average(section.average_r2)
     return
 
-#In Progress the function is broken right now and does basically nothing
 def add_averages_to_patient_data(brain_section_names_array, brain_section_values_array,work_book, patients):
-    #Use this function after the inital workbook as been created as this appends on to it
+    #Use this function after the inital workbook has been created as this appends on to it
     #Order of the arrays must be the same
     for patient in patients:
         sheet = work_book[str(patient.name)]
