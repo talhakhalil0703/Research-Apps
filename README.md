@@ -12,3 +12,5 @@ Modified CreateFigures: Acts in a similar fashion to the original but runs a dif
 DiscardFigures: An app that makes data analysis from autoFoof really quick by treating it sort of like a game. Shows figures one by one from autoFoof, where you can swipe left for bad data and right for good data, the bad data gets noted and stored in a text file which createFigures can use to ignore the bad data.
 
 NoteMaker: Is an app that I created for my self that automates the process of taking notes in a specific context, and minimized how much I needed to type.
+
+Simplified Version: Is a general version that is more versatile and easier to use, so the Lab can continue doing their great work using these simple programs to speed up their workflow immensely.
