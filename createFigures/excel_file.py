@@ -67,14 +67,14 @@ def add_averages_to_excel_file(patient_array, max_mm, do_not_run_mm, work_book, 
         create_figure('Ventral ' + str(x) + 'mm', data_path, ventral, bin_peak, bin_area, palpha)
         x += 1
 
-    slopes_per_mm = append_data(slopes_per_mm, dorsal_extreme.exponents, ventral_extreme.exponents)
-    beta_freq_area_per_mm = append_data(beta_freq_area_per_mm, dorsal_extreme.beta_freq_area, ventral_extreme.beta_freq_area)
-    delta_freq_area_per_mm = append_data(delta_freq_area_per_mm, dorsal_extreme.delta_freq_area, ventral_extreme.delta_freq_area)
-    theta_freq_area_per_mm = append_data(theta_freq_area_per_mm, dorsal_extreme.theta_freq_area, ventral_extreme.theta_freq_area)
-    alpha_freq_area_per_mm = append_data(alpha_freq_area_per_mm, dorsal_extreme.alpha_freq_area, ventral_extreme.alpha_freq_area)
-    low_beta_freq_area_per_mm = append_data(low_beta_freq_area_per_mm, dorsal_extreme.low_beta_freq_area, ventral_extreme.low_beta_freq_area)
-    high_beta_freq_area_per_mm = append_data(high_beta_freq_area_per_mm, dorsal_extreme.high_beta_freq_area, ventral_extreme.high_beta_freq_area)
-    gamma_freq_area_per_mm = append_data(gamma_freq_area_per_mm, dorsal_extreme.gamma_freq_area, ventral_extreme.gamma_freq_area)
+    #slopes_per_mm = append_data(slopes_per_mm, dorsal_extreme.exponents, ventral_extreme.exponents)
+    #beta_freq_area_per_mm = append_data(beta_freq_area_per_mm, dorsal_extreme.beta_freq_area, ventral_extreme.beta_freq_area)
+    #delta_freq_area_per_mm = append_data(delta_freq_area_per_mm, dorsal_extreme.delta_freq_area, ventral_extreme.delta_freq_area)
+    #theta_freq_area_per_mm = append_data(theta_freq_area_per_mm, dorsal_extreme.theta_freq_area, ventral_extreme.theta_freq_area)
+    #alpha_freq_area_per_mm = append_data(alpha_freq_area_per_mm, dorsal_extreme.alpha_freq_area, ventral_extreme.alpha_freq_area)
+    #low_beta_freq_area_per_mm = append_data(low_beta_freq_area_per_mm, dorsal_extreme.low_beta_freq_area, ventral_extreme.low_beta_freq_area)
+    #high_beta_freq_area_per_mm = append_data(high_beta_freq_area_per_mm, dorsal_extreme.high_beta_freq_area, ventral_extreme.high_beta_freq_area)
+    #gamma_freq_area_per_mm = append_data(gamma_freq_area_per_mm, dorsal_extreme.gamma_freq_area, ventral_extreme.gamma_freq_area)
 
     create_slope_mm('Slopes', data_path, slopes_per_mm)
     create_slope_mm('Beta Freq Area', data_path, beta_freq_area_per_mm)
@@ -84,6 +84,21 @@ def add_averages_to_excel_file(patient_array, max_mm, do_not_run_mm, work_book, 
     create_slope_mm('Low Beta Freq Area', data_path, low_beta_freq_area_per_mm)
     create_slope_mm('High Beta Freq Area', data_path, high_beta_freq_area_per_mm)
     create_slope_mm('Gamma Freq Area', data_path, gamma_freq_area_per_mm)
+
+    ASCCI_FOR_A = 65
+    sheet = work_book.create_sheet('Slope Data')
+    sheet['A1'] = 'MM Name'
+    for index, slopearray in enumerate(slopes_per_mm):
+        sheet[chr(ASCCI_FOR_A + index + 1) + '1'] = str(index + 1)
+        for valueindex, value in enumerate(slopearray):
+            sheet[chr(ASCCI_FOR_A + index + 1) + str(2 + valueindex)] = str(value)
+
+    sheet = work_book.create_sheet('Beta Data')
+    sheet['A1'] = 'MM Name'
+    for index, slopearray in enumerate(beta_freq_area_per_mm):
+        sheet[chr(ASCCI_FOR_A + index + 1) + '1'] = str(index + 1)
+        for valueindex, value in enumerate(slopearray):
+            sheet[chr(ASCCI_FOR_A + index + 1) + str(2 + valueindex)] = str(value)
 
 class Do_NOT(Exception):
     pass

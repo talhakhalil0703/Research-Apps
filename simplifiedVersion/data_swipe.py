@@ -6,25 +6,23 @@ import sys
 import os
 import re
 
-fooof_file_regex = re.compile(r'(\d\d\d\d-\d\d\d\d)([ABCDEF])?(auto)(\d)(\d)?')
-
-window = tk.Tk()
-window.title('Data Analysis Swipe')
-image_size = 600
-notes_path = 'discard.txt'
-file_name_ending_with = '_segment_spectrum.png'
-key_press = 0
 global_index = 0
 global_max_index = None
 global_files_array_with_location = []
 global_png_files_names_to_write = []
 global_img = None
+key_press = 0
+notes_path = 'discard.txt'
+file_name_ending_with = '_segment_spectrum.png'
+image_size = 600
+fooof_file_regex = re.compile(r'(\d\d\d\d-\d\d\d\d)([ABCDEF])?(auto)(\d)(\d)?')
+data_path_path = ''
 
-def find_files_in_directory(data_path):
+def find_files_in_directory(data_path_path):
     global global_files_array_with_location, global_png_files_names_to_write, global_max_index
 
     files_array = []
-    for root, dirs, files in os.walk(data_path):
+    for root, dirs, files in os.walk(data_path_path):
         for png in files:
             if png.endswith(file_name_ending_with):
                 files_array.append(os.path.join(root, png))
@@ -135,16 +133,17 @@ def update_image_shown():
     global_img = ImageTk.PhotoImage(rs_image)
     global_image.configure(image = global_img)
 
-yes_button = Button(window, text = 'YES DISCARD', command = yes_clicked)
-no_button = Button(window, text = "DON'T DISCARD", command = no_clicked)
 
+window = tk.Tk()
+window.title('Data Swipe')
+
+yes_button = Button(window, text = 'KEEP FILE', command = yes_clicked)
+no_button = Button(window, text = "DISCARD", command = no_clicked)
 data_path = Entry(window, width =63)
-
 yes_button.grid(row = 0, column = 0)
 no_button.grid(row = 0, column = 1)
 data_path.grid(row = 0, column = 2, columnspan = 2)
-
-data_path.insert(END, '/Users/talhakhalil/Desktop/Data')
+data_path.insert(END, data_path_path)
 
 console = scrolledtext.ScrolledText(window, height = 35)
 global_image = tk.Label(window, image = global_img)
@@ -163,4 +162,7 @@ undo_button.grid(row = 2, column = 3)
 
 window.bind('<KeyPress>', key_down)
 window.bind('<KeyRelease>', key_up)
-window.mainloop()
+
+def data_swipe(data_path_path):
+    data_path.insert(END, data_path_path)
+    window.mainloop()
