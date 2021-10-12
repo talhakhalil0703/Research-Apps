@@ -1,166 +1,162 @@
-import tkinter as tk
-from tkinter import *
-from tkinter import scrolledtext
-from PIL import ImageTk, Image
-import sys
 import os
+from PIL import Image, ImageTk
 import re
+import tkinter
+from tkinter import scrolledtext, filedialog, simpledialog
 
-fooof_file_regex = re.compile(r'(\d\d\d\d-\d\d\d\d)([ABCDEF])?(auto)(\d)(\d)?')
+import pandas as pd
 
-window = tk.Tk()
-window.title('Data Analysis Swipe')
-image_size = 600
-notes_path = 'discard.txt'
-file_name_ending_with = '_segment_spectrum.png'
-key_press = 0
-global_index = 0
-global_max_index = None
-global_files_array_with_location = []
-global_png_files_names_to_write = []
-global_img = None
+# For images to display they need to be global or else they get garbage collected
+spectrum_img = ""
+fooof_img = ""
 
-def find_files_in_directory(data_path):
-    global global_files_array_with_location, global_png_files_names_to_write, global_max_index
 
-    files_array = []
-    for root, dirs, files in os.walk(data_path):
-        for png in files:
-            if png.endswith(file_name_ending_with):
-                files_array.append(os.path.join(root, png))
+class Window:
+    images_index = 0
+    discarded_data = []
+    key_press = 0
 
-    png_files_names = []
-    for png_file in files_array:
-        png_file_name = fooof_file_regex.search(png_file)
-        if png_file_name is not None and png_file_name not in png_files_names:
-            png_files_names.append(png_file_name[0])
+    def __init__(self) -> None:
+        self.window = tkinter.Tk()
+        self.window.title("Data Analysis Swipe")
 
-    global_max_index = len(png_files_names)
-    print(global_max_index)
-    global_files_array_with_location, global_png_files_names_to_write = files_array, png_files_names
+        self.next_button = tkinter.Button(
+            self.window, text="NEXT", command=self.__next_clicked
+        )
+        self.previous_button = tkinter.Button(
+            self.window, text="PREVIOUS", command=self.__previous_clicked
+        )
+        self.browse_button = tkinter.Button(
+            self.window, text="BROWSE", command=self.__browse_clicked
+        )
+        self.browse_path_entry = tkinter.Entry(self.window, width=63)
+        self.browse_path_entry.insert(tkinter.END, "PRESS BROWSE")
+        self.discard_scroll_text = scrolledtext.ScrolledText(self.window, height=35)
+        self.segment_spectrum_image = tkinter.Label(self.window)
+        self.fooof_image = tkinter.Label(self.window)
+        self.discard_figure_button = tkinter.Button(
+            self.window, text="DISCARD", command=self.__discard_clicked
+        )
+        self.choose_index_button = tkinter.Button(
+            self.window, text="CHOOSE INDEX", command=self.__choose_index_clicked
+        )
 
-def write_to_notes_file(content_to_write):
-    with open(notes_path,'a') as notes_to_write:
-        notes_to_write.write(content_to_write + '\n')
-    read_notes_file()
-def read_notes_file():
-    with open(notes_path, 'r') as notes_to_read:
-        console.delete('1.0' , END)
-        console.insert(END, notes_to_read.read())
-        console.see(tk.END)
-def remove_last_line():
-    content = ''
-    with open(notes_path, 'r') as notes_to_read:
-        content = notes_to_read.readlines()
-        content.pop(-1)
-    with open(notes_path, 'w') as notes_to_write:
-        replace_content = ''
-        for line in content:
-            replace_content += line
-        notes_to_write.write(replace_content)
-    read_notes_file()
-def yes_clicked():
-    global global_index
-    global_index += 1
-    update_image_shown()
-def no_clicked():
-    global global_index, global_png_files_names_to_write
-    write_to_notes_file(global_png_files_names_to_write[global_index])
-    global_index += 1
-    update_image_shown()
-def undo_clicked():
-    global global_index
-    if global_index is 0:
-        return
-    remove_last_line()
-    global_index -= 1
-    update_image_shown()
+        self.browse_path_entry.grid(row=0, column=0)
+        self.browse_button.grid(row=0, column=1)
+        self.discard_figure_button.grid(row=0, column=2)
+        self.choose_index_button.grid(row=0, column=3)
+        self.previous_button.grid(row=0, column=4)
+        self.next_button.grid(row=0, column=5)
+        self.fooof_image.grid(row=1, column=0, columnspan=2)
+        self.segment_spectrum_image.grid(row=1, column=2, columnspan=2)
+        self.discard_scroll_text.grid(row=1, column=4, columnspan=2)
 
-def go_back_one():
-    global global_index
-    if global_index is 0:
-        return
-    global_index -= 1
-    update_image_shown()
-def clear_file():
-    global global_index
-    global_index = 0
-    print('File Cleared')
-    print(global_index)
-    with open(notes_path, 'w') as notes_to_write:
-        notes_to_write.write('')
-    read_notes_file()
-    update_image_shown()
+    def __next_clicked(self):
+        if self.images_index < len(self.png_keys) - 1:
+            self.images_index += 1
+            self.__update_figure_shown()
+        else:
+            print("Cannot view next, all images have been viewed")
 
-def find_files_clicked():
-    find_files_in_directory(data_path.get())
-    update_image_shown()
-def exit_clicked():
-    sys.exit(0)
-def update_index_value_clicked():
-    global global_index, global_png_files_names_to_write
-    with open(notes_path, 'r') as notes_to_read:
-        content = notes_to_read.readlines()
-        content[-1] = content[-1].replace('\n', '')
-        global_index = global_png_files_names_to_write.index(content[-1])
-        print(global_index)
+    def __previous_clicked(self):
+        if self.images_index > 0:
+            self.images_index -= 1
+            self.__update_figure_shown()
+        else:
+            print("Cannot view previous, no previous images left")
 
-def key_down(key):
-    global key_press
-    if key_press is 0:
-        key_press = 1
-def key_up(key):
-    global key_press
-    if key_press is 1:
-        if key.char == 'q':
-            exit_clicked()
-        if key.char == ',':
-            no_clicked()
-        if key.char == '.':
-            yes_clicked()
-        if key.char == 'u':
-            undo_clicked()
-        if key.char == 'z':
-            go_back_one()
-        if key.char == '`':
-            clear_file()
-        key_press = 0
+    def __browse_clicked(self):
+        filename = filedialog.askdirectory()
+        if os.path.isdir(filename) is False:
+            print("The provided path was not a directory.")
+            return
 
-def update_image_shown():
-    global global_index, global_files_array_with_location
-    print(global_index)
-    og_image = Image.open(global_files_array_with_location[global_index])
-    rs_image = og_image.resize((image_size,image_size), Image.ANTIALIAS)
-    global global_img, exit_button
-    global_img = ImageTk.PhotoImage(rs_image)
-    global_image.configure(image = global_img)
+        self.browse_path_entry.delete(0, tkinter.END)
+        self.browse_path_entry.insert(tkinter.END, filename)
 
-yes_button = Button(window, text = 'YES DISCARD', command = yes_clicked)
-no_button = Button(window, text = "DON'T DISCARD", command = no_clicked)
+        _segment_spectrum_file_ending = "_segment_spectrum.png"
+        _fooof_file_ending = "_FOOOF.png"
+        _fooof_file_regex = re.compile(r"(\d\d\d\d-\d\d\d\d)([ABCDEF])?(auto)(\d)(\d)?")
 
-data_path = Entry(window, width =63)
+        files_array = []
+        for root, dirs, files in os.walk(filename):
+            for png in files:
+                if png.endswith(_segment_spectrum_file_ending) or png.endswith(
+                    _fooof_file_ending
+                ):
+                    files_array.append(os.path.join(root, png))
 
-yes_button.grid(row = 0, column = 0)
-no_button.grid(row = 0, column = 1)
-data_path.grid(row = 0, column = 2, columnspan = 2)
+        self.png_paths = {}
+        for png_file in files_array:
+            png_file_name = _fooof_file_regex.search(png_file)
+            if png_file_name is not None:
+                if png_file_name[0] not in self.png_paths:
+                    self.png_paths[png_file_name[0]] = [png_file]
+                else:
+                    self.png_paths[png_file_name[0]].append(png_file)
+        self.png_keys = list(self.png_paths.keys())
+        self.__update_figure_shown()
+        self.__update_notes_section()
 
-data_path.insert(END, '/Users/talhakhalil/Desktop/Data')
+    def __choose_index_clicked(self):
+        index = simpledialog.askinteger(title="Choose Index", prompt="Choose Index")
+        if index < 0:
+            print("Can't choose a negative integer")
+        elif index > len(self.png_keys) - 1:
+            print("Can't choose an integer greater than the amount of files available")
+        else:
+            self.images_index = index
+            self.__update_figure_shown()
 
-console = scrolledtext.ScrolledText(window, height = 35)
-global_image = tk.Label(window, image = global_img)
-console.grid(row = 1, columnspan = 2, column = 2)
-global_image.grid(row = 1, column = 0, columnspan = 2)
+    def __update_figure_shown(self):
+        global fooof_img, spectrum_img
+        print(f"{self.images_index} : {len(self.png_keys) - 1}")
+        key = self.png_keys[self.images_index]
+        _fooof_image_path = self.png_paths[key][0]
+        og_image = Image.open(_fooof_image_path)
+        rs_image = og_image.resize((600, 600), Image.ANTIALIAS)
+        fooof_img = ImageTk.PhotoImage(rs_image)
+        self.fooof_image.configure(image=fooof_img)
 
-find_files_button = Button(window, text = 'FIND FILES', command = find_files_clicked)
-exit_button = Button(window, text = 'EXIT', fg = 'red', command = exit_clicked)
-update_index_value = Button(window, text = 'UPDATED INDEX', command = update_index_value_clicked)
-undo_button = Button(window, text = 'UNDO', command = undo_clicked)
+        _spectrum_image_path = self.png_paths[key][1]
+        og_image = Image.open(_spectrum_image_path)
+        rs_image = og_image.resize((600, 600), Image.ANTIALIAS)
+        spectrum_img = ImageTk.PhotoImage(rs_image)
+        self.segment_spectrum_image.configure(image=spectrum_img)
 
-exit_button.grid(row = 2, column = 0)
-find_files_button.grid(row = 2, column = 1)
-update_index_value.grid(row = 2, column = 2)
-undo_button.grid(row = 2, column = 3)
+    def __discard_clicked(self):
+        self.discarded_data = []
+        if os.path.exists("TossData.txt"):
+            with open("TossData.txt", "r") as notes:
+                for name in notes.read().split("\n"):
+                    self.discarded_data.append(name)
 
-window.bind('<KeyPress>', key_down)
-window.bind('<KeyRelease>', key_up)
-window.mainloop()
+        discarded_item = self.png_keys[self.images_index]
+        if discarded_item in self.discarded_data:
+            self.discarded_data.remove(discarded_item)
+        else:
+            self.discarded_data.append(discarded_item)
+
+        self.discarded_data = list(filter(None, self.discarded_data))
+
+        with open("TossData.txt", "w") as notes:
+            for item in self.discarded_data:
+                notes.write(item + "\n")
+
+        self.__update_notes_section()
+
+    def __update_notes_section(self):
+        if os.path.exists("TossData.txt"):
+            with open("TossData.txt", "r") as notes:
+                self.discard_scroll_text.delete("1.0", tkinter.END)
+                self.discard_scroll_text.insert(tkinter.END, notes.read())
+                self.discard_scroll_text.see(tkinter.END)
+
+    def start_application(self):
+        self.window.mainloop()
+
+
+if __name__ == "__main__":
+    global window
+    window = Window()
+    window.start_application()
